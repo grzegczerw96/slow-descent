@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · lab · zejście 0–40 m</title>
+<link rel="preload" href="../fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+:root{--ink:#0A0A0A;--foam:#D8EEF0;--g:clamp(16px,3.9vw,56px);--fs:200px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#02090D}
+body{font-family:Archivo,sans-serif;-webkit-font-smoothing:antialiased;color:var(--ink)}
+html.wait body{visibility:hidden}
+
+/* one fixed scene; the page only provides scroll length */
+.stage{position:fixed;inset:0;height:100svh;overflow:hidden;background:#E9ECEA}
+.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+video{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.scroll{height:1600svh}
+.layer{position:absolute;inset:0;padding:calc(var(--g)*.62) var(--g) var(--g);display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.air{color:var(--ink)}
+.water{color:var(--foam)}
+.nav,.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:15px;line-height:1.35;font-weight:500}
+.nav{align-items:flex-start}
+.nav .sub{display:block;font-weight:400;opacity:.62}
+.foot .lead{font-size:clamp(18px,1.7vw,24px);line-height:1.28;letter-spacing:-.01em;will-change:opacity,filter}
+.depth{text-align:right;line-height:1}
+.depth small{display:block;font-size:12px;opacity:.7;margin-bottom:6px}
+.depth b{display:block;font-size:clamp(30px,3.1vw,44px);font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.title{position:absolute;left:var(--g);top:50%;transform:translateY(-50%);font-weight:850;line-height:.86;letter-spacing:-.02em;font-size:var(--fs);white-space:nowrap;visibility:hidden}
+.title span{display:block;width:max-content}
+.title i{display:inline-block;width:0;height:0;vertical-align:baseline}
+
+/* statements: each holds the middle of the screen for a stretch of the descent, coming and going through a soft blur */
+.say{position:absolute;left:var(--g);top:0;width:min(44vw,600px);color:var(--foam);pointer-events:none;opacity:0;will-change:transform,opacity,filter}
+.say small{display:block;font-size:12px;letter-spacing:.04em;opacity:.65;margin-bottom:12px;font-variant-numeric:tabular-nums}
+.say h3{font-weight:400;font-size:clamp(30px,3.4vw,54px);line-height:1.04;letter-spacing:-.025em}
+.say p{font-size:clamp(15px,1.15vw,18px);line-height:1.5;opacity:.72;margin-top:16px;max-width:27em}
+.pulse{position:absolute;left:var(--g);top:0;width:min(44vw,600px);color:var(--foam);opacity:0;pointer-events:none;will-change:transform,opacity,filter}
+.pulse canvas{display:block;width:100%;height:96px}
+.pulse .bpm{display:flex;justify-content:space-between;font-size:12px;opacity:.7;margin-top:8px;font-variant-numeric:tabular-nums}
+
+.after{position:relative;z-index:3;min-height:100svh;background:#02090D;color:var(--foam);padding:var(--g);display:flex;flex-direction:column;justify-content:space-between}
+.after h2{font-weight:300;font-size:clamp(32px,4.4vw,64px);line-height:1.05;letter-spacing:-.02em;max-width:14em}
+.after small{font-size:14px;opacity:.7}
+
+.lab{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;display:flex;gap:6px;background:rgba(10,10,10,.82);color:#fff;padding:6px;border-radius:999px;font:500 12px/1 Archivo,sans-serif}
+.lab a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;opacity:.6}
+.lab a.on{background:#fff;color:#000;opacity:1}
+.lab span{padding:8px 10px;opacity:.6;font-variant-numeric:tabular-nums}
+html.clean .layer,html.clean .lab{display:none}
+@media (max-width:599px){
+  .layer{padding-bottom:calc(var(--g) + 64px)}
+  .say,.pulse{width:calc(66vw - var(--g))}
+  .lab{font-size:11px}.lab a{padding:7px 9px}
+}
+</style>
+<script>document.documentElement.classList.add('wait'); if (new URLSearchParams(location.search).has('clean')) document.documentElement.classList.add('clean');</script>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+</head>
+<body>
+
+<div class="stage">
+  <canvas class="gl"></canvas>
+  <video muted playsinline loop preload="auto"></video>
+  <h1 class="title"><span>SLOW<i></i></span><span>DESCENT<i></i></span></h1>
+  <div class="layer air">
+    <nav class="nav"><p>Slow Descent®<span class="sub">Szkoła freedivingu, Gdynia</span></p><span>Menu</span></nav>
+    <div class="foot"><p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p><p class="depth"><small>głębokość</small><b>0,0 m</b></p></div>
+  </div>
+  <div class="layer water" aria-hidden="true">
+    <nav class="nav"><p>Slow Descent®<span class="sub">Szkoła freedivingu, Gdynia</span></p><span>Menu</span></nav>
+    <div class="foot"><p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p><p class="depth"><small>głębokość</small><b>0,0 m</b></p></div>
+  </div>
+  <div id="says"></div>
+  <div class="pulse"><canvas></canvas><div class="bpm"><span>tętno</span><span id="bpm">72 ud./min</span></div></div>
+</div>
+
+<div class="scroll" aria-hidden="true"></div>
+<section class="after">
+  <small>(03) Kursy</small>
+  <h2>Tu zaczyna się kurs. Na górze czeka twój partner.</h2>
+  <small>Koniec prototypu</small>
+</section>
+
+<div class="lab"><a href="../">Wersje</a><a href="../hero-c/">Hero</a><a class="on" href="../zejscie-v6/">Zejście 0–40 m</a><span id="fps">– ms</span></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const q = new URLSearchParams(location.search);
+  const $ = s => document.querySelector(s);
+  const stage = $('.stage'), air = $('.air'), water = $('.water'), title = $('.title');
+  const meters = [...document.querySelectorAll('.depth b')], leads = [...document.querySelectorAll('.lead')];
+  const fpsEl = $('#fps'), video = $('video'), canvas = $('.gl'), pulse = $('.pulse'), bpmEl = $('#bpm');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches && !q.has('motion');
+
+  // the statements: [label depth, in at, out at (metres), heading]; each holds the middle of the screen in between
+  const SAYS = [
+    [15, 10.5, 15.8, 'Tętno zwalnia i&nbsp;już teraz nie musisz nic robić.'],
+    [20, 18.5, 29.9, 'Myśli się porządkują, a&nbsp;Ty przestajesz płynąć.'],
+    [30, 30.9, 37.2, 'Ciało pamięta odruch, z&nbsp;którym się urodziłeś.'],
+    [40, 38.8, 99, 'Teraz zawracasz, od teraz znasz siebie jeszcze lepiej.'],
+  ];
+  const sayEls = SAYS.map(([d, , , h]) => {
+    const el = document.createElement('div'); el.className = 'say';
+    el.innerHTML = `<small>−${d} m</small><h3>${h}</h3>`;
+    $('#says').appendChild(el); return el;
+  });
+
+  video.src = 'media/' + (Math.min(screen.width, screen.height) < 700 ? 'water-loop-540.mp4' : 'water-loop-720.mp4');
+  if (!reduce) video.play().catch(() => {});
+
+  await document.fonts.load('850 100px Archivo');
+  await document.fonts.load('600 64px Archivo');
+  await document.fonts.ready;
+
+  let W = 0, H = 0, dpr = 1, amp = 1, ppm = 1;
+  function fit() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    document.documentElement.style.setProperty('--fs', '100px');
+    const avail = W - 2 * parseFloat(getComputedStyle(air).paddingLeft);
+    const wordW = title.querySelectorAll('span')[1].getBoundingClientRect().width;
+    document.documentElement.style.setProperty('--fs', Math.min(100 * avail / wordW, H * .5 / 1.72).toFixed(2) + 'px');
+    amp = Math.max(.5, Math.min(1, W / 1440));
+    ppm = H / 4;                      // one screen = four metres of water
+  }
+  fit();
+
+  const wave = (x, t) => (5 * Math.sin(x * .005 + t * .9) + 2.5 * Math.sin(x * .013 - t * 1.4) + 1.2 * Math.sin(x * .031 + t * 2.1)) * amp;
+  const N = 48;
+  let clipped = true;
+  function clip(level, t) {
+    if (level < -40) { if (clipped) { air.style.clipPath = 'inset(0 0 100% 0)'; water.style.clipPath = 'none'; clipped = false; } return; }
+    clipped = true;
+    const pts = [];
+    for (let i = 0; i <= N; i++) { const x = W * i / N; pts.push(`${x.toFixed(1)}px ${(level + wave(x, t)).toFixed(1)}px`); }
+    air.style.clipPath = `polygon(0px 0px, ${W}px 0px, ${pts.slice().reverse().join(',')})`;
+    water.style.clipPath = `polygon(${pts.join(',')}, ${W}px ${H}px, 0px ${H}px)`;
+  }
+
+  // --- WebGL ---
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+  const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+  const fs = `precision highp float;
+    uniform sampler2D uText, uVid, uDv;
+    uniform vec2 uRes, uVidSize;
+    uniform vec4 uDvRect;                                  // diver quad: centre x, y and size in device px
+    uniform float uT, uD, uPpm, uSink, uDpr, uAmp, uVidOn, uDvA, uDvFar, uDvBlue, uDvTop, uDvSil, uDvSolid, uDvFadeL, uDvFadeR, uDvAsp, uSky, uOut, uFx;
+    float wave(float x, float t){ return (5.*sin(x*.005+t*.9)+2.5*sin(x*.013-t*1.4)+1.2*sin(x*.031+t*2.1))*uAmp; }
+    float lum(vec3 c){ return dot(c, vec3(.299,.587,.114)); }
+    vec3 footage(vec2 uv){ return texture2D(uVid, clamp(uv, vec2(.001), vec2(.999))).rgb; }
+    float textA(vec2 p){ return texture2D(uText, p/uRes).a; }
+    vec2 vidUV(vec2 px, float s){
+      float sc = max(uRes.x/uVidSize.x, uRes.y*.95/uVidSize.y);
+      vec2 size = uVidSize*sc;
+      return vec2((px.x - (uRes.x-size.x)*.5)/size.x, (px.y - s*.55)/size.y);
+    }
+    // sunlight left after passing through z metres of water (red goes first, then green)
+    // clear water: light turquoise for the first twenty metres, then the blue thickens fast towards the turn at 40 m
+    vec3 sun(float z){ z = max(z, 0.); return exp(-z*vec3(.075,.017,.011))*exp(-z*.006 - max(z - 18., 0.)*.05); }
+    // diver footage: colour in the left half, matte in the right half
+    vec4 diver(vec2 uv, float r){
+      uv = clamp(uv, vec2(.003), vec2(.997));
+      vec2 c = vec2(uv.x*.5, uv.y), m = vec2(.5 + uv.x*.5, uv.y);
+      vec2 dx = vec2(r*.5, 0.), dy = vec2(0., r*uDvAsp);
+      vec3 col = texture2D(uDv, c).rgb*.2; float a = texture2D(uDv, m).r*.2;
+      for (int i = 0; i < 4; i++) {          // inner ring, half the radius
+        vec2 o = (i == 0 ? dx : i == 1 ? -dx : i == 2 ? dy : -dy)*.5;
+        col += texture2D(uDv, c+o).rgb*.1; a += texture2D(uDv, m+o).r*.1;
+      }
+      for (int i = 0; i < 8; i++) {          // outer ring
+        float t = float(i)*.785398;
+        vec2 o = dx*cos(t) + dy*sin(t);
+        col += texture2D(uDv, clamp(c+o, vec2(0.), vec2(.5, 1.))).rgb*.05; a += texture2D(uDv, clamp(m+o, vec2(.5, 0.), vec2(1.))).r*.05;
+      }
+      return vec4(col, a);
+    }
+    void main(){
+      vec2 px = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);
+      float s = uRes.y*.5 - uD*uPpm + wave(px.x/uDpr, uT)*uDpr;
+      vec3 paper = vec3(.914,.925,.918), ink = vec3(.04);
+      vec2 sink = vec2(0., uSink);
+      if (px.y < s - 1.5*uDpr) {
+        float a = textA(px - sink);
+        gl_FragColor = vec4(mix(paper, ink, a) - exp(-(s - px.y)/(5.*uDpr))*.10, 1.); return;
+      }
+      float below = px.y - s, dm = below/uPpm;          // metres of water above this point
+      float near = exp(-dm/3.5);                          // how much of the surface light still reaches
+      vec2 vuv = vidUV(px, s);
+      vec3 v = uVidOn > .5 ? footage(vuv) : vec3(.35,.72,.72);
+      float L = lum(v);
+      vec3 lit = mix(vec3(.10,.33,.40), vec3(.36,.66,.70), smoothstep(.35,.85,L)) + smoothstep(.75,1.,L)*.18;
+      // open water: brighter towards the light above, a soft glow drifting slowly across it
+      float glow = .5 + .5*sin(px.x/uRes.x*3.1 + uT*.07)*sin(px.y/uRes.y*1.7 - uT*.05);
+      vec3 body = mix(vec3(.12,.36,.44), vec3(.24,.54,.60), smoothstep(uRes.y*1.1, -uRes.y*.2, px.y)) * (.92 + .16*glow);
+      vec3 col = mix(body, lit, near) * sun(dm) * 1.15;
+      // refraction from the real water, strongest just under the surface
+      vec2 e = vec2(16./uVidSize.x, 16./uVidSize.y);
+      vec2 g = vec2(lum(footage(vuv+vec2(e.x,0.))) - lum(footage(vuv-vec2(e.x,0.))), lum(footage(vuv+vec2(0.,e.y))) - lum(footage(vuv-vec2(0.,e.y))));
+      vec2 off = (g*16. + vec2(sin(px.y/uDpr*.018 + uT*1.1), 0.)*.12) * uDpr * uAmp * max(near, .25);
+      // the title: seen a little larger just under the surface, then fading into the blue
+      float mag = mix(1., 1.1, exp(-below/(uRes.y*.45)));
+      float cx = uRes.x*.5;
+      vec2 tp = vec2(cx + (px.x - cx)/mag, s + below/mag) - sink + off;
+      float tf = smoothstep(6.1, 3., uD), melt = 1. - tf;
+      tp += vec2(sin(tp.y*.018/uDpr + uT*.9), cos(tp.x*.015/uDpr - uT*.7))*melt*16.*uDpr;
+      float br = (.6 + 5.*min(dm/8., 1.) + melt*20.)*uDpr;
+      float a = textA(tp)*.2;
+      for (int i = 0; i < 8; i++) { float t = float(i)*.785398; a += textA(tp + vec2(cos(t), sin(t))*br)*.06 + textA(tp + vec2(cos(t + .39), sin(t + .39))*br*.5)*.04; }
+      col = mix(col, vec3(.86,.94,.95)*sun(dm) + .03, a*exp(-dm*.17)*.92*tf);
+      // at the turn: the surface far above. The real footage of the surface from below, seen softly through forty
+      // metres of water, lets its light down from the top of the view, with a paler glow around it
+      if (uSky > 0.) {
+        vec2 sq = (px - vec2(uRes.x*.5, -uRes.y*.1))/uRes.y;
+        vec3 halo = vec3(.03, .085, .1)*exp(-dot(sq, sq)*2.6);
+        float sl = 0.;
+        if (uVidOn > .5) {
+          vec2 su = vec2(px.x/uRes.x, px.y/uRes.y*.75), sb = vec2(9./uVidSize.x, 9./uVidSize.y);
+          sl = lum(footage(su))*.4 + (lum(footage(su+vec2(sb.x,0.))) + lum(footage(su-vec2(sb.x,0.))) + lum(footage(su+vec2(0.,sb.y))) + lum(footage(su-vec2(0.,sb.y))))*.15;
+        }
+        col += (vec3(.05, .15, .17)*smoothstep(.35, .9, sl)*exp(-px.y/(uRes.y*.42)) + halo) * uSky;
+      }
+
+      // the diver: real footage placed in this water, lit by what light is left at its depth, fogged by its distance
+      if (uDvA > 0.) {
+        vec2 duv = (px - (uDvRect.xy - uDvRect.zw*.5))/uDvRect.zw;
+        if (duv.x > 0. && duv.x < 1. && duv.y > 0. && duv.y < 1.) {
+          // leaving (uOut 0..1), in the way picked: 1 out of focus, 2 into the haze, 3 breaking into grains,
+          // 4 into the light, 5 through moving water; 0 a plain fade
+          float o = uOut;
+          if (uFx > 4.5) duv += vec2(sin(duv.y*34. + uT*2.6), sin(duv.x*29. - uT*2.1))*.02*o;
+          float grain = 0.;
+          if (uFx > 2.5 && uFx < 3.5) {
+            vec2 q = floor((px + vec2(0., uT*24.*uDpr))/(3.*uDpr));
+            float n1 = fract(sin(dot(q, vec2(12.9898, 78.233)))*43758.5453);
+            vec2 Q = px/(46.*uDpr) + vec2(0., uT*.3), Qi = floor(Q), Qf = fract(Q); Qf = Qf*Qf*(3. - 2.*Qf);
+            float h00 = fract(sin(dot(Qi, vec2(127.1, 311.7)))*43758.5), h10 = fract(sin(dot(Qi + vec2(1., 0.), vec2(127.1, 311.7)))*43758.5);
+            float h01 = fract(sin(dot(Qi + vec2(0., 1.), vec2(127.1, 311.7)))*43758.5), h11 = fract(sin(dot(Qi + vec2(1., 1.), vec2(127.1, 311.7)))*43758.5);
+            grain = .55*n1 + .45*mix(mix(h00, h10, Qf.x), mix(h01, h11, Qf.x), Qf.y);
+            duv += (vec2(n1, fract(n1*7.13)) - .5)*.035*o;          // the grains drift apart
+          }
+          float extra = uFx > .5 && uFx < 1.5 ? 28. : uFx > 1.5 && uFx < 2.5 ? 7. : uFx > 3.5 && uFx < 4.5 ? 14. : uFx > 4.5 ? 4. : 0.;
+          vec4 d = diver(duv, (.15 + 4.*uDvFar + extra*o)*uDpr/uDvRect.z);
+          if (uFx > 2.5 && uFx < 3.5) d.a *= smoothstep(o - .15, o + .02, grain);
+          // soft frame edges (a fin crossing the edge of the footage must not end in a straight cut) and no sun glare;
+          // clips whose fins leave the frame are placed so that edge lies beyond the screen
+          vec2 ed = smoothstep(vec2(0., uDvTop), vec2(.06 + uDvFadeL, uDvTop + .05), duv) * smoothstep(vec2(0.), vec2(.06 + uDvFadeR, .05), 1. - duv);
+          // a colour-keyed matte still holds glare and water, a network matte (solid) only the odd patch of clear blue
+          float keyed = (1. - smoothstep(.55, .85, lum(d.rgb))) * (1. - uDvBlue*smoothstep(.06, .18, d.b - max(d.r, d.g)));
+          float solid = 1. - uDvBlue*smoothstep(.10, .22, d.b - max(d.r, d.g));
+          d.a *= ed.x*ed.y * mix(keyed, solid, uDvSolid);
+          float z = max(uD + (px.y - uRes.y*.5)/uPpm, 0.);
+          vec3 sc = d.rgb*(sun(z*.7)*1.6 + .05)*vec3(.82, 1., 1.06);
+          // lit from above and seen against the light, a body in the water is never much brighter than the water
+          // around it: water left in the soft edge of the matte would otherwise glow
+          sc = mix(min(sc, col*1.25 + .015), sc, smoothstep(.8, .98, d.a));
+          // seen from further away against the light, a body is a shape without detail, darker than the water
+          sc = mix(sc, mix(col*.32, sc*.4, .15), uDvSil);
+          if (uFx > 3.5 && uFx < 4.5) sc = mix(sc, col*1.6 + vec3(.06, .12, .13), o*.8);
+          sc = mix(sc, col, min(1., uDvFar*.82 + (uFx > 1.5 && uFx < 2.5 ? o*.95 : 0.)));
+          col = mix(col, sc, clamp(d.a, 0., 1.)*uDvA);
+        }
+      }
+      col += exp(-below/(1.6*uDpr))*.55 - exp(-below/(9.*uDpr))*.06;
+      vec2 uv = px/uRes - .5;
+      col *= 1. - dot(uv, uv)*(.25 + .5*(1. - near));
+      gl_FragColor = vec4(col, 1.);
+    }`;
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; for (const n of ['uText', 'uVid', 'uDv', 'uRes', 'uVidSize', 'uT', 'uD', 'uPpm', 'uSink', 'uDpr', 'uAmp', 'uVidOn', 'uDvRect', 'uDvA', 'uDvFar', 'uDvBlue', 'uDvTop', 'uDvSil', 'uDvSolid', 'uDvFadeL', 'uDvFadeR', 'uDvAsp', 'uSky', 'uOut', 'uFx']) U[n] = gl.getUniformLocation(prog, n);
+  function mkTex(unit) {
+    const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+    for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+    return t;
+  }
+  const texText = mkTex(0), texVid = mkTex(1), texDv = mkTex(2);
+  gl.uniform1i(U.uText, 0); gl.uniform1i(U.uVid, 1); gl.uniform1i(U.uDv, 2);
+
+  // --- divers: three clips, each owns a stretch of the scroll (in screens) and its path through the water ---
+  // k: [x, y, height] as fractions of the screen, far: 1 = deep in the haze, 0 = right in front of us
+  // tStart/tEnd: share of the clip used (diver A's fins leave the frame early on, diver C reaches the surface at the
+  // end, which must not show); blue: drop blue-dominant pixels (glare halos) for clips whose diver wears nothing blue;
+  // top: extra fade at the frame's top; bleed: frame edges (t r b l) the fins cross, kept just beyond the screen;
+  // sil: 1 = seen only as a dark shape against the light; solid: the matte comes from tools/matte_ai.py or a render, not from colour; fadeL/fadeR: a wider soft left/right edge where a fin leaves the frame; skip: [s0, s1] seconds jumped over; fx: how it leaves
+  // (0 fade, 1 out of focus, 2 into the haze, 3 grains, 4 into the light, 5 moving water).
+  // The stretches: E (descent), B (close pass), E (glide away), D (the turn at 40 m)
+  const CLIPS = [
+    // E (4K, black and white; the water gives it its colour): dives in and leads the descent head first, and fades with
+    // the first statement
+    { src: 'diver-e.mp4', h0: 1.7, h1: 5.45, tStart: 0, tEnd: .58, fx: 2, solid: 1, blue: 0, top: 0, bleed: 't', from: { x: .55, y: .5, s: .9, far: .45, sil: 0 }, to: { x: .5, y: .52, s: .95, far: .3, sil: 0 } },
+    // B: comes in with the second statement at 18.5 m and leaves with it at 29.9 m
+    { src: 'diver-b.mp4', h0: 6.1, h1: 9.0, tStart: 0, tEnd: 1, fx: 2, skip: [5.2, 5.9], solid: 1, fadeL: .2, fadeR: .16, blue: 1, top: 0, bleed: 't', from: { x: .62, y: .50, s: 1.2, far: .1, sil: 0 }, to: { x: .62, y: .54, s: .95, far: .3, sil: 0 } },
+    // E again: gliding without effort, away into the deep, with the third statement
+    { src: 'diver-e.mp4', h0: 9.2, h1: 10.8, tStart: .58, tEnd: 1, fx: 1, solid: 1, blue: 0, top: 0, bleed: '', from: { x: .5, y: .5, s: .9, far: .3, sil: 0 }, to: { x: .52, y: .56, s: .72, far: .58, sil: 0 } },
+    // D: the turn at 40 m, held long: rises from a crouch and turns over, under the light from above
+    { src: 'diver-d.mp4', h0: 10.85, h1: 15.2, tStart: .12, tEnd: 1, hold: 1, solid: 1, blue: 0, top: 0, bleed: '', from: { x: .68, y: .52, s: .82, far: .36, sil: 0 }, to: { x: .66, y: .46, s: .9, far: .26, sil: 0 } },
+  ];
+  // one video per file, shared by the stretches that use different parts of it; aspect = width of the colour half / height
+  const VIDS = {};
+  for (const c of CLIPS) {
+    let v = VIDS[c.src];
+    if (!v) {
+      v = VIDS[c.src] = document.createElement('video');
+      v.muted = true; v.playsInline = true; v.preload = 'auto'; v._users = []; v._want = 0;
+      // whole clip in memory: scrubbing then never waits for the network or for range requests
+      fetch('media/' + c.src).then(r => r.blob()).then(b => { v.src = URL.createObjectURL(b); });
+      v.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+      stage.appendChild(v);
+      v.addEventListener('loadeddata', () => { for (const u of v._users) { u.ready = true; u.dirty = true; u.aspect = v.videoWidth / 2 / v.videoHeight; } });
+      v.addEventListener('seeked', () => { for (const u of v._users) u.dirty = true; if (Math.abs(v.currentTime - v._want) > .03) v.currentTime = v._want; });
+    }
+    v._users.push(c); c.v = v; c.dirty = false; c.want = 0; c.ready = false; c.aspect = .5625;
+  }
+  let dvBound = null;
+  function diverState(h) {
+    for (const c of CLIPS) {
+      if (h < c.h0 - .05 || (h > c.h1 + .05 && !c.hold)) continue;
+      const k = c01((h - c.h0) / (c.h1 - c.h0)), e = ease(k);
+      const P = n => lerp(c.from[n], c.to[n], e);
+      // hold: stays on its last frame to the end; out: how far into leaving (the last 18% of its stretch)
+      const out = c.hold ? 0 : 1 - c01((1 - k) / .18);
+      const a = c01(k / .12) * (!c.fx ? 1 - out : 1 - ease(c01((out - .45) / .55)));
+      return { c, k, a, out, x: P('x'), y: P('y'), s: P('s'), far: P('far'), sil: P('sil') };
+    }
+    return null;
+  }
+  function scrubDiver(ds) {
+    const c = ds.c, v = c.v;
+    if (!c.ready || !v.duration) return;
+    let tw = lerp(c.tStart, c.tEnd, ds.k) * v.duration;
+    if (c.skip) {     // seconds of the clip that cannot be cut out (a fin covering the lens) are jumped over
+      const [s0, s1] = c.skip, gap = s1 - s0;
+      tw = c.tStart * v.duration + ds.k * ((c.tEnd - c.tStart) * v.duration - gap);
+      if (tw > s0) tw += gap;
+    }
+    c.want = v._want = Math.min(v.duration - .05, tw);
+    if (!v.seeking && Math.abs(v.currentTime - c.want) > 1 / 60) v.currentTime = c.want;
+    if (c.dirty || dvBound !== c) {
+      gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, texDv);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, v);
+      c.dirty = false; dvBound = c;
+    }
+  }
+
+  const tc = document.createElement('canvas'), tctx = tc.getContext('2d');
+  function drawTitle() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); gl.viewport(0, 0, canvas.width, canvas.height);
+    tc.width = canvas.width; tc.height = canvas.height;
+    const fsPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'));
+    const sr = stage.getBoundingClientRect();
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0); tctx.clearRect(0, 0, W, H);
+    tctx.font = `850 ${fsPx}px Archivo`; tctx.fillStyle = '#fff';
+    if ('letterSpacing' in tctx) tctx.letterSpacing = (-0.02 * fsPx).toFixed(2) + 'px';
+    for (const s of title.querySelectorAll('span')) {
+      const r = s.getBoundingClientRect(), base = s.querySelector('i').getBoundingClientRect().top;
+      tctx.fillText(s.textContent, r.left - sr.left, base - sr.top);
+    }
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texText);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+  drawTitle();
+
+  let vidOn = false, vidDirty = true;
+  const rvfc = 'requestVideoFrameCallback' in video;
+  const markFrame = () => { vidDirty = true; video.requestVideoFrameCallback(markFrame); };
+  if (rvfc) video.requestVideoFrameCallback(markFrame);
+  function uploadVideo(needed) {
+    if (!needed || video.readyState < 2 || (!vidDirty && vidOn)) return;
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texVid);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    if (!vidOn) { gl.uniform2f(U.uVidSize, video.videoWidth, video.videoHeight); vidOn = true; }
+    vidDirty = !rvfc;
+  }
+
+  // --- the heart monitor: a sweeping trace, beats get further apart ---
+  const pc = pulse.querySelector('canvas'), px2 = pc.getContext('2d');
+  let pw = 0, ph = 0, trace = null, sweep = 0, lastBeat = 0, pT = performance.now() / 1000;
+  function sizePulse() { const r = pc.getBoundingClientRect(); pw = Math.round(r.width * dpr); ph = Math.round(r.height * dpr); pc.width = pw; pc.height = ph; trace = new Float32Array(pw).fill(0); sweep = 0; }
+  sizePulse();
+  const ecg = s => {                                   // one heartbeat, s = seconds since the beat
+    const g = (m, w, a) => a * Math.exp(-((s - m) * (s - m)) / (2 * w * w));
+    return g(.04, .022, .12) + g(.11, .008, -.12) + g(.13, .009, 1) + g(.155, .01, -.28) + g(.33, .045, .22);
+  };
+  function drawPulse(bpm, now) {
+    const dt = Math.min(now - pT, .1); pT = now;
+    const speed = pw / 4;                              // the trace crosses the box in four seconds
+    let steps = Math.round(dt * speed);
+    while (steps-- > 0) {
+      const tNow = now - steps / speed;
+      if (tNow - lastBeat > 60 / bpm) lastBeat = tNow;
+      trace[sweep] = ecg(tNow - lastBeat); sweep = (sweep + 1) % pw;
+    }
+    px2.clearRect(0, 0, pw, ph);
+    px2.lineWidth = 1.4 * dpr; px2.lineJoin = 'round'; px2.strokeStyle = '#D8EEF0';
+    const mid = ph * .62, amp2 = ph * .52, gap = 18 * dpr;
+    for (let seg = 0; seg < 2; seg++) {              // draw old part and new part with the gap ahead of the sweep
+      px2.beginPath();
+      const a0 = seg ? 0 : sweep + gap, a1 = seg ? sweep : pw;
+      for (let x = a0; x < a1; x++) { const y = mid - trace[x] * amp2; x === a0 ? px2.moveTo(x, y) : px2.lineTo(x, y); }
+      px2.globalAlpha = seg ? 1 : .45; px2.stroke();
+    }
+    px2.globalAlpha = 1;
+    px2.fillStyle = '#fff'; px2.beginPath(); px2.arc(sweep, mid - trace[(sweep - 1 + pw) % pw] * amp2, 2.2 * dpr, 0, 7); px2.fill();
+  }
+
+  // --- scroll: one depth for the whole page ---
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .1, smoothWheel: true });
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  const c01 = v => Math.max(0, Math.min(1, v)), lerp = (a, b, k) => a + (b - a) * k, ease = v => v * v * (3 - 2 * v);
+  // screens of scroll: hero 3, to 15 m .75, pause at 15 m 1.5, 15→40 m 6.25, the turn held 4.5
+  const S_HERO = 3, S_B = .75, S_P = 1.5, S_D = 6.25;
+  function state(y) {
+    const h = y / H, o = { pause: 0 };
+    o.hp = c01(h / S_HERO);
+    if (h <= S_HERO) o.D = o.hp < .5 ? lerp(-1.12, 2.3, ease(o.hp / .5)) : lerp(2.3, 12, (o.hp - .5) / .5);
+    else if (h <= S_HERO + S_B) o.D = 12 + (h - S_HERO) / S_B * 3;
+    else if (h <= S_HERO + S_B + S_P) { o.D = 15; o.pause = (h - S_HERO - S_B) / S_P; }
+    else { o.D = Math.min(40, 15 + (h - S_HERO - S_B - S_P) / S_D * 25); o.pause = 1; }
+    return o;
+  }
+
+  let ft = [], last = performance.now();
+  gsap.ticker.add(() => {
+    const now = performance.now(); ft.push(now - last); last = now; if (ft.length > 60) ft.shift();
+    const t = reduce ? 0 : now / 1000;
+    const st = state(lenis.scroll), D = st.D;
+    const level = H * .5 - D * ppm;
+    const sink = H * .32 * Math.pow(c01((st.hp - .4) / .6), 1.6);
+    clip(level, t);
+    const dTxt = Math.max(0, D).toFixed(1).replace('.', ',') + ' m';
+    if (dTxt !== meters[0].textContent) for (const m of meters) m.textContent = dTxt;
+    // the lead goes between 1.8 and 2.3 m, softening as it goes
+    const lo = 1 - c01((D - 1.8) / .5);
+    for (const l of leads) { l.style.opacity = lo.toFixed(3); l.style.filter = lo < 1 ? `blur(${((1 - lo) * 6).toFixed(1)}px)` : 'none'; }
+
+    // statements: in over .7 m out of a blur, held in the middle (drifting up a little), out the same way; the
+    // first carries the heart trace under it
+    let po = 0;
+    sayEls.forEach((el, i) => {
+      const [, a0, a1] = SAYS[i];
+      const o = ease(c01((D - a0) / .7)) * ease(c01((a1 - D) / .7));
+      const life = c01((D - a0) / Math.max(a1 - a0, .1));
+      const block = el.offsetHeight + (i === 0 ? pulse.offsetHeight + 28 : 0);
+      const y = H * .5 - block / 2 + (1 - life) * 14 - (1 - o) * 10;
+      el.style.opacity = o.toFixed(3);
+      el.style.filter = o < .999 ? `blur(${((1 - o) * 8).toFixed(1)}px)` : 'none';
+      el.style.transform = `translate3d(0,${y.toFixed(1)}px,0)`;
+      if (i === 0) {
+        po = o;
+        pulse.style.opacity = o.toFixed(3); pulse.style.filter = el.style.filter;
+        pulse.style.transform = `translate3d(0,${(y + el.offsetHeight + 28).toFixed(1)}px,0)`;
+      }
+    });
+    // the pulse: 72 bpm at the surface, 60 at 15 m, 41 at the end of the pause
+    const bpm = st.pause > 0 ? lerp(60, 41, ease(st.pause)) : lerp(72, 60, c01((D - 12) / 3));
+    if (po > 0.01) { drawPulse(bpm, now / 1000); bpmEl.textContent = Math.round(bpm) + ' ud./min'; }
+
+    uploadVideo(D < 6 || D > 36);     // the surface footage is needed again for the light at the turn
+    gl.uniform2f(U.uRes, W * dpr, H * dpr); gl.uniform1f(U.uT, t); gl.uniform1f(U.uD, D);
+    gl.uniform1f(U.uPpm, ppm * dpr); gl.uniform1f(U.uSink, sink * dpr); gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uAmp, amp);
+    gl.uniform1f(U.uVidOn, vidOn ? 1 : 0);
+    const ds = diverState(lenis.scroll / H);
+    if (ds && ds.c.ready) {
+      scrubDiver(ds);
+      const hh = ds.s * H, ww = hh * ds.c.aspect, b = ds.c.bleed;
+      let cx = W * (W < 600 ? Math.min(ds.x, .6) : ds.x), cy = ds.y * H;
+      if (b.includes('r')) cx = Math.max(cx, W - ww / 2 + 2); else if (b.includes('l')) cx = Math.min(cx, ww / 2 - 2);
+      // the soft top edge (5 %) goes above the screen too, so feet run out of the screen instead of fading before it
+      if (b.includes('t')) cy = Math.min(cy, hh / 2 - 2 - hh * .05); else if (b.includes('b')) cy = Math.max(cy, H - hh / 2 + 2);
+      gl.uniform4f(U.uDvRect, cx * dpr, cy * dpr, ww * dpr, hh * dpr);
+      gl.uniform1f(U.uDvA, ds.a); gl.uniform1f(U.uDvFar, ds.far); gl.uniform1f(U.uDvBlue, ds.c.blue); gl.uniform1f(U.uDvTop, ds.c.top); gl.uniform1f(U.uDvSil, ds.sil); gl.uniform1f(U.uDvSolid, ds.c.solid ? 1 : 0); gl.uniform1f(U.uDvFadeL, ds.c.fadeL || 0); gl.uniform1f(U.uDvFadeR, ds.c.fadeR || 0); gl.uniform1f(U.uOut, ds.out); gl.uniform1f(U.uFx, ds.c.fx || 0); gl.uniform1f(U.uDvAsp, ds.c.aspect);
+    } else gl.uniform1f(U.uDvA, 0);
+    gl.uniform1f(U.uSky, .6 * ease(c01((D - 30.4) / 1.5)) + .65 * ease(c01((D - 37.8) / 1.6)));
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    const avg = ft.reduce((a, b) => a + b, 0) / ft.length; fpsEl.textContent = `${avg.toFixed(1)} ms · max ${Math.max(...ft).toFixed(0)}`;
+  });
+
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { fit(); drawTitle(); sizePulse(); }, 150); });
+  window.__lab = { lenis, video, state, get H() { return H; } };
+  document.documentElement.classList.remove('wait');
+});
+</script>
+</body>
+</html>
