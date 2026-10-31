@@ -297,18 +297,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   const CLIPS = [
     // E (4K, black and white; the water gives it its colour): dives in and leads the descent head first, and fades with
     // the first statement
-    { src: 'diver-e.mp4', h0: 1.7, h1: 5.45, tStart: 0, tEnd: .58, fx: 2, solid: 1, blue: 0, top: 0, bleed: 't', from: { x: .55, y: .5, s: .9, far: .45, sil: 0 }, to: { x: .5, y: .52, s: .95, far: .3, sil: 0 } },
+    { src: 'diver-e1.mp4', h0: 1.7, h1: 5.45, tStart: 0, tEnd: 1, fx: 2, solid: 1, blue: 0, top: 0, bleed: 't', from: { x: .55, y: .5, s: .9, far: .45, sil: 0 }, to: { x: .5, y: .52, s: .95, far: .3, sil: 0 } },
     // B: comes in with the second statement at 18.5 m and leaves with it at 29.9 m
     { src: 'diver-b.mp4', h0: 6.1, h1: 9.0, tStart: 0, tEnd: 1, fx: 2, skip: [4.4, 5.9], solid: 1, fadeL: .2, fadeR: .16, blue: 0, top: 0, bleed: 't', from: { x: .62, y: .50, s: 1.2, far: .1, sil: 0 }, to: { x: .62, y: .54, s: .95, far: .15, sil: 0 } },
     // E again: gliding without effort, away into the deep, with the third statement
-    { src: 'diver-e.mp4', h0: 9.2, h1: 10.8, tStart: .58, tEnd: 1, fx: 1, solid: 1, blue: 0, top: 0, bleed: '', from: { x: .5, y: .5, s: .9, far: .3, sil: 0 }, to: { x: .52, y: .56, s: .72, far: .58, sil: 0 } },
+    { src: 'diver-e2.mp4', h0: 9.2, h1: 10.8, tStart: 0, tEnd: 1, fx: 1, solid: 1, blue: 0, top: 0, bleed: '', from: { x: .5, y: .5, s: .9, far: .3, sil: 0 }, to: { x: .52, y: .56, s: .72, far: .58, sil: 0 } },
     // D: the turn at 40 m, held long: rises from a crouch and turns over, under the light from above
     { src: 'diver-d.mp4', h0: 10.85, h1: 15.2, tStart: .12, tEnd: 1, hold: 1, solid: 1, blue: 0, top: 0, bleed: '', from: { x: .68, y: .52, s: .82, far: .36, sil: 0 }, to: { x: .66, y: .46, s: .9, far: .26, sil: 0 } },
   ];
   // one video per file, shared by the stretches that use different parts of it; aspect = width of the colour half / height
-  // The first clip plays straight from its address, so it shows a second after loading; then each clip is fetched
-  // whole, one after another in the order they appear (fetched all at once, the first one arrived only after ~8 s), and
-  // swapped in, after which scrubbing never waits for the network
+  // One clip at a time, in the order they appear: fetched all at once they shared the line and the first one came last
+  // (38 s on a 1 MB/s line). The first plays straight from its address, so it shows within a second or two, and the next
+  // starts only once the browser holds all of it; the others are fetched whole, so scrubbing never waits for the
+  // network. The woman's footage is split in two files for the same reason: her descent (diver-e1) is needed first.
   const VIDS = {}; let fetches = Promise.resolve();
   for (const c of CLIPS) {
     let v = VIDS[c.src];
@@ -317,15 +318,17 @@ window.addEventListener('DOMContentLoaded', async () => {
       v.muted = true; v.playsInline = true; v.preload = 'auto'; v._users = []; v._want = 0;
       // whole clip in memory: scrubbing then never waits for the network or for range requests
       const url = 'media/' + c.src;
-      if (c === CLIPS[0]) v.src = url;
-      fetches = fetches.then(() => fetch(url)).then(r => r.blob()).then(b => { v.src = URL.createObjectURL(b); }).catch(() => { if (!v.src) v.src = url; });
+      if (c === CLIPS[0]) {
+        v.src = url;
+        fetches = new Promise(done => {
+          const all = () => { const b = v.buffered; if (b.length && b.end(b.length - 1) >= v.duration - .2) done(); };
+          v.addEventListener('progress', all); v.addEventListener('suspend', all); setTimeout(done, 20000);
+        });
+      } else fetches = fetches.then(() => fetch(url)).then(r => r.blob()).then(b => { v.src = URL.createObjectURL(b); }).catch(() => { v.src = url; });
       v.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
       stage.appendChild(v);
-      // on the swap the last frame stays on screen until the same moment of the clip is found again (no flash of frame 0)
-      v.addEventListener('loadeddata', () => {
-        for (const u of v._users) { if (!u.ready) u.readyAt = performance.now(); u.ready = true; u.aspect = v.videoWidth / 2 / v.videoHeight; if (!v._want) u.dirty = true; }
-        if (v._want) v.currentTime = v._want;
-      });
+      // nothing is shown until the frame for where the page is has arrived (not frame 0 first): see scrubDiver
+      v.addEventListener('loadeddata', () => { for (const u of v._users) { u.ready = true; u.aspect = v.videoWidth / 2 / v.videoHeight; } });
       v.addEventListener('seeked', () => { for (const u of v._users) u.dirty = true; if (Math.abs(v.currentTime - v._want) > .03) v.currentTime = v._want; });
     }
     v._users.push(c); c.v = v; c.dirty = false; c.want = 0; c.ready = false; c.aspect = .5625;
@@ -359,10 +362,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     c.want = v._want = Math.min(v.duration - .05, tw);
     if (!v.seeking && Math.abs(v.currentTime - c.want) > 1 / 60) v.currentTime = c.want;
-    if (c.dirty || dvBound !== c) {
+    else if (!c.shown && !v.seeking) c.dirty = true;
+    if (c.dirty || (dvBound !== c && c.shown)) {
       gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, texDv);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, v);
       c.dirty = false; dvBound = c;
+      if (!c.shown) { c.shown = true; c.readyAt = performance.now(); }
     }
   }
 
@@ -487,8 +492,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     gl.uniform1f(U.uPpm, ppm * dpr); gl.uniform1f(U.uSink, sink * dpr); gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uAmp, amp);
     gl.uniform1f(U.uVidOn, vidOn ? 1 : 0);
     const ds = diverState(lenis.scroll / H);
-    if (ds && ds.c.ready) {
-      scrubDiver(ds);
+    if (ds && ds.c.ready) scrubDiver(ds);
+    if (ds && ds.c.shown) {
       const hh = ds.s * H, ww = hh * ds.c.aspect, b = ds.c.bleed;
       let cx = W * (W < 600 ? Math.min(ds.x, .6) : ds.x), cy = ds.y * H;
       if (b.includes('r')) cx = Math.max(cx, W - ww / 2 + 2); else if (b.includes('l')) cx = Math.min(cx, ww / 2 - 2);
@@ -504,7 +509,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 
   let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { fit(); drawTitle(); sizePulse(); }, 150); });
-  window.__lab = { lenis, video, state, get H() { return H; } };
+  window.__lab = { lenis, video, state, CLIPS, get H() { return H; } };
   document.documentElement.classList.remove('wait');
 });
 </script>
