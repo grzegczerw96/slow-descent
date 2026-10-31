@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · wersje</title>
+<style>
+/* one column of versions, newest first; the directions the site came from below */
+@font-face{font-family:'Archivo';src:url(fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Archivo';src:url(fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F}
+:root{--deep:#02090D;--water:#0A2A33;--foam:#D8EEF0;--mist:rgba(216,238,240,.6);--line:rgba(216,238,240,.16);color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(var(--water),var(--deep) 60vh) var(--deep);color:var(--foam);font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  padding:clamp(28px,6vw,72px) max(16px,4vw) 72px;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;font-size:15px;font-weight:500;line-height:1.35}
+header span{display:block;font-weight:400;color:var(--mist)}
+h1{font-weight:300;font-size:clamp(34px,5vw,64px);line-height:1.04;letter-spacing:-.025em;margin:clamp(48px,9vw,120px) 0 clamp(28px,4vw,48px);max-width:14em;text-wrap:balance}
+h2{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--mist);margin:64px 0 18px}
+ol{list-style:none;border-top:1px solid var(--line)}
+li a{display:grid;grid-template-columns:7.5em minmax(0,16em) minmax(0,1fr) 1.5em;gap:8px 24px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
+li a:hover .name,li a:focus-visible .name{text-decoration:underline;text-underline-offset:4px}
+li a:focus-visible{outline:2px solid var(--foam);outline-offset:4px}
+time{font-size:13px;color:var(--mist);font-variant-numeric:tabular-nums}
+.name{font-size:clamp(20px,2vw,26px);letter-spacing:-.01em}
+.what{font-size:15px;line-height:1.5;color:var(--mist);max-width:38em}
+.go{font-size:20px;text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.grid a{color:var(--mist);text-decoration:none;font-size:13px;display:grid;gap:8px}
+.grid img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;border-radius:4px;background:var(--water)}
+footer{margin-top:64px;font-size:13px;color:var(--mist)}
+@media (max-width:700px){li a{grid-template-columns:minmax(0,1fr) 1.5em} time,.what{grid-column:1} .go{grid-row:1/4;grid-column:2;align-self:center}}
+</style>
+</head>
+<body>
+<header><p>Slow Descent®<span>Szkoła freedivingu, Gdynia</span></p><p>Prototypy</p></header>
+<h1>Wersje strony, od pierwszej linii wody do zejścia na 40&nbsp;m.</h1>
+<ol>
+      <li><a href="zejscie-v3/">
+        <time>31.10.2026</time><span class="name">Zejście 0–40 m · v3</span><span class="what">Kobieta od wejścia do wody, nurek 2 bliżej tekstu, salto od wstania z kucków, światło z powierzchni od 30 m. Na górze pasek do porównania sposobów znikania nurków.</span><span class="go" aria-hidden="true">→</span>
+      </a></li>
+      <li><a href="zejscie-v2/">
+        <time>31.10.2026</time><span class="name">Zejście 0–40 m · v2</span><span class="what">Nowa sekwencja: kobieta (4K) prowadzi zejście, nurek 2 przepływa blisko, salto przy 40 m. Teksty przypięte na środku, jasny turkus przy powierzchni.</span><span class="go" aria-hidden="true">→</span>
+      </a></li>
+      <li><a href="hero-c/">
+        <time>30.10.2026</time><span class="name">Hero C · nagranie wody</span><span class="what">Linia wody z prawdziwego nagrania powierzchni, tytuł widziany spod wody.</span><span class="go" aria-hidden="true">→</span>
+      </a></li>
+      <li><a href="hero/">
+        <time>30.10.2026</time><span class="name">Hero A i B · pierwsze próby</span><span class="what">Linia wody liczona w przeglądarce: filtr SVG (A) i WebGL (B).</span><span class="go" aria-hidden="true">→</span>
+      </a></li>
+</ol>
+<h2>Kierunki, od których zaczęliśmy</h2>
+<div class="grid">
+      <a href="kierunki/K1-mono-okno-w-literze.png"><img src="kierunki/K1-mono-okno-w-literze.png" alt="K1 mono okno w literze" loading="lazy"><span>K1 mono okno w literze</span></a>
+      <a href="kierunki/K1-pelna-strona.png"><img src="kierunki/K1-pelna-strona.png" alt="K1 pelna strona" loading="lazy"><span>K1 pelna strona</span></a>
+      <a href="kierunki/K2-zdjecie-cicha-typografia.png"><img src="kierunki/K2-zdjecie-cicha-typografia.png" alt="K2 zdjecie cicha typografia" loading="lazy"><span>K2 zdjecie cicha typografia</span></a>
+      <a href="kierunki/K3-plakat-ultramaryna.png"><img src="kierunki/K3-plakat-ultramaryna.png" alt="K3 plakat ultramaryna" loading="lazy"><span>K3 plakat ultramaryna</span></a>
+      <a href="kierunki/K4-tekst-przez-zdjecie.png"><img src="kierunki/K4-tekst-przez-zdjecie.png" alt="K4 tekst przez zdjecie" loading="lazy"><span>K4 tekst przez zdjecie</span></a>
+      <a href="kierunki/K5-skala-glebokosci.png"><img src="kierunki/K5-skala-glebokosci.png" alt="K5 skala glebokosci" loading="lazy"><span>K5 skala glebokosci</span></a>
+</div>
+<footer>Każda wersja jest zamrożona w swoim folderze; nowsze prace jej nie zmieniają.</footer>
+</body>
+</html>

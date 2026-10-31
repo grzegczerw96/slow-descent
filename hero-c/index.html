@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · lab · linia wody C</title>
+<link rel="preload" href="../fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+:root{--ink:#0A0A0A;--foam:#D8EEF0;--g:clamp(16px,3.9vw,56px);--fs:200px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#02090D}
+body{font-family:Archivo,sans-serif;-webkit-font-smoothing:antialiased;color:var(--ink)}
+html.wait body{visibility:hidden}
+
+.track{height:400svh;position:relative}
+.stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#E9ECEA}
+.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+video{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.layer{position:absolute;inset:0;padding:calc(var(--g)*.62) var(--g) var(--g);display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.air{color:var(--ink)}
+.water{color:var(--foam)}
+.nav,.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-size:15px;line-height:1.35;font-weight:500}
+.nav{align-items:flex-start}
+.nav .sub{display:block;font-weight:400;opacity:.62}
+.foot .lead{font-size:clamp(18px,1.7vw,24px);line-height:1.28;letter-spacing:-.01em}
+.depth{text-align:right;line-height:1}
+.depth small{display:block;font-size:12px;opacity:.7;margin-bottom:6px}
+.depth b{display:block;font-size:clamp(30px,3.1vw,44px);font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* measuring copy of the title: drawn in WebGL, never shown */
+.title{position:absolute;left:var(--g);top:50%;transform:translateY(-50%);font-weight:850;line-height:.86;letter-spacing:-.02em;font-size:var(--fs);white-space:nowrap;visibility:hidden}
+.title span{display:block;width:max-content}
+.title i{display:inline-block;width:0;height:0;vertical-align:baseline}
+
+
+.after{min-height:100svh;background:#02090D;color:var(--foam);padding:var(--g);display:flex;flex-direction:column;justify-content:space-between}
+.after h2{font-weight:300;font-size:clamp(32px,4.4vw,64px);line-height:1.05;letter-spacing:-.02em;max-width:14em}
+.after small{font-size:14px;opacity:.7}
+
+.lab{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;display:flex;gap:6px;background:rgba(10,10,10,.82);color:#fff;padding:6px;border-radius:999px;font:500 12px/1 Archivo,sans-serif}
+.lab a{color:#fff;text-decoration:none;padding:8px 12px;border-radius:999px;opacity:.6}
+.lab a.on{background:#fff;color:#000;opacity:1}
+.lab span{padding:8px 10px;opacity:.6;font-variant-numeric:tabular-nums}
+/* ?clean: only the water and the title, for design boards */
+html.clean .layer,html.clean .lab{display:none}
+@media (max-width:599px){
+  .layer{padding-bottom:calc(var(--g) + 64px)}
+  .lab{font-size:11px}.lab a{padding:7px 9px}
+}
+</style>
+<script>document.documentElement.classList.add('wait'); if (new URLSearchParams(location.search).has('clean')) document.documentElement.classList.add('clean');</script>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+</head>
+<body>
+
+<section class="track" aria-label="Slow Descent">
+  <div class="stage">
+    <canvas class="gl"></canvas>
+    <video muted playsinline loop preload="auto" crossorigin="anonymous"></video>
+    <h1 class="title"><span>SLOW<i></i></span><span>DESCENT<i></i></span></h1>
+    <div class="layer air">
+      <nav class="nav"><p>Slow Descent®<span class="sub">Szkoła freedivingu, Gdynia</span></p><span>Menu</span></nav>
+      <div class="foot"><p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p><p class="depth"><small>głębokość</small><b>0,0 m</b></p></div>
+    </div>
+    <div class="layer water" aria-hidden="true">
+      <nav class="nav"><p>Slow Descent®<span class="sub">Szkoła freedivingu, Gdynia</span></p><span>Menu</span></nav>
+      <div class="foot"><p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p><p class="depth"><small>głębokość</small><b>0,0 m</b></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="after">
+  <small>(02) −12 m</small>
+  <h2>Tu kończy się powierzchnia. Dalej jest tylko oddech, lina i spokój.</h2>
+  <small>Koniec prototypu</small>
+</section>
+
+<div class="lab"><a href="../">Wersje</a><a href="../hero/?v=A">A</a><a href="../hero/?v=B">B</a><a class="on" href="../hero-c/">C · nagranie</a><span id="fps">– ms</span></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const q = new URLSearchParams(location.search);
+  const $ = s => document.querySelector(s);
+  const stage = $('.stage'), air = $('.air'), water = $('.water'), track = $('.track'), title = $('.title');
+  const meters = [...document.querySelectorAll('.depth b')], fpsEl = $('#fps'), video = $('video'), canvas = $('.gl');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches && !q.has('motion');
+
+  // lighter footage on small screens
+  video.src = 'media/' + (Math.min(screen.width, screen.height) < 700 ? 'water-loop-540.mp4' : 'water-loop-720.mp4');
+  if (!reduce) video.play().catch(() => {});
+
+  await document.fonts.load('850 100px Archivo');
+  await document.fonts.ready;
+
+  let W = 0, H = 0, dpr = 1, amp = 1;
+  function fit() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    document.documentElement.style.setProperty('--fs', '100px');
+    const avail = W - 2 * parseFloat(getComputedStyle(air).paddingLeft);
+    const wordW = title.querySelectorAll('span')[1].getBoundingClientRect().width;
+    const fs = Math.min(100 * avail / wordW, H * 0.5 / (2 * 0.86));
+    document.documentElement.style.setProperty('--fs', fs.toFixed(2) + 'px');
+    amp = Math.max(0.5, Math.min(1, W / 1440));
+  }
+  fit();
+
+  // the surface: shared by the DOM clip paths and the shader
+  const wave = (x, t) => (5 * Math.sin(x * .005 + t * .9) + 2.5 * Math.sin(x * .013 - t * 1.4) + 1.2 * Math.sin(x * .031 + t * 2.1)) * amp;
+  const N = 48;
+  function clip(level, t) {
+    const pts = [];
+    for (let i = 0; i <= N; i++) { const x = W * i / N; pts.push(`${x.toFixed(1)}px ${(level + wave(x, t)).toFixed(1)}px`); }
+    air.style.clipPath = `polygon(0px 0px, ${W}px 0px, ${pts.slice().reverse().join(',')})`;
+    water.style.clipPath = `polygon(${pts.join(',')}, ${W}px ${H}px, 0px ${H}px)`;
+  }
+
+  // --- WebGL ---
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+  const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }';
+  const fs = `precision highp float;
+    uniform sampler2D uText, uVid;
+    uniform vec2 uRes, uVidSize;
+    uniform float uT, uWater, uSink, uDepth, uDpr, uAmp, uVidOn;
+    float wave(float x, float t){ return (5.*sin(x*.005+t*.9)+2.5*sin(x*.013-t*1.4)+1.2*sin(x*.031+t*2.1))*uAmp; }
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+    float lum(vec3 c){ return dot(c, vec3(.299,.587,.114)); }
+    // footage placed with its surface at the waterline, covering the width; it drifts up slower than the camera (parallax)
+    vec2 vidUV(vec2 px, float s){
+      float sc = max(uRes.x/uVidSize.x, uRes.y*.95/uVidSize.y);
+      vec2 size = uVidSize*sc;
+      float top = s*.55 + uRes.y*.0;
+      return vec2((px.x - (uRes.x-size.x)*.5)/size.x, (px.y - top)/size.y);
+    }
+    vec3 footage(vec2 uv){ return texture2D(uVid, clamp(uv, vec2(.001), vec2(.999))).rgb; }
+    float textA(vec2 p){ return texture2D(uText, p/uRes).a; }
+    void main(){
+      vec2 px = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);
+      float s = uWater + wave(px.x/uDpr, uT)*uDpr;
+      vec3 paper = vec3(.914,.925,.918), ink = vec3(.04);
+      vec2 sink = vec2(0., uSink);
+      if (px.y < s - 1.5*uDpr) {
+        float a = textA(px - sink);
+        // the meniscus darkens the air just above the line
+        float m = exp(-(s - px.y)/(5.*uDpr))*.10;
+        gl_FragColor = vec4(mix(paper, ink, a) - m, 1.); return;
+      }
+      float below = max(px.y - s, 0.);
+      float depthPx = below/uRes.y + uDepth*1.4;          // how much water lies between the eye and this point
+      vec2 vuv = vidUV(px, s);
+      vec3 v = uVidOn > .5 ? footage(vuv) : vec3(.35,.72,.72);
+      // refraction from the real water: gradient of the footage brightness
+      vec2 e = vec2(16./uVidSize.x, 16./uVidSize.y);
+      vec2 g = vec2(lum(footage(vuv+vec2(e.x,0.))) - lum(footage(vuv-vec2(e.x,0.))), lum(footage(vuv+vec2(0.,e.y))) - lum(footage(vuv-vec2(0.,e.y))));
+      vec2 off = g * 16. * uDpr * uAmp + vec2(sin(px.y/uDpr*.018 + uT*1.1), 0.)*2.*uDpr*uAmp;
+      // grade: keep the light, move the colour from green-cyan to Baltic blue-green
+      float L = lum(v);
+      vec3 shallow = vec3(.36,.66,.70), mid = vec3(.10,.33,.40), deep = vec3(.01,.06,.09);
+      vec3 col = mix(mid, shallow, smoothstep(.35, .85, L)) + smoothstep(.75, 1., L)*.18;
+      // absorption: red goes first, then green; light from the surface fades
+      vec3 absorb = exp(-depthPx*vec3(3.2, 1.25, .85));
+      col = mix(deep, col*absorb, exp(-depthPx*.9));
+      // under the surface everything is seen 1.33x larger (split-level view), plus the wobble of the water
+      float cx = uRes.x*.5;
+      vec2 tp = vec2(cx + (px.x - cx)/1.08, s + below/1.12) - sink + off;
+      float br = (.6 + 5.*min(depthPx, 1.))*uDpr;
+      float a = textA(tp)*.4 + (textA(tp+vec2(br,0.)) + textA(tp-vec2(br,0.)))*.15 + (textA(tp+vec2(0.,br)) + textA(tp-vec2(0.,br)))*.15;
+      vec3 txt = vec3(.86,.94,.95)*absorb + .04;
+      float vis = exp(-depthPx*1.6);
+      col = mix(col, txt, a*vis*.92);
+      // the underside of the surface: a thin bright band, then a darker mirror zone
+      col += exp(-below/(1.6*uDpr))*.55;
+      col -= exp(-below/(9.*uDpr))*.06;
+      // soft vignette as the light goes
+      vec2 uv = px/uRes - .5;
+      col *= 1. - dot(uv, uv)*(.25 + .55*uDepth);
+      gl_FragColor = vec4(col, 1.);
+    }`;
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; for (const n of ['uText', 'uVid', 'uRes', 'uVidSize', 'uT', 'uWater', 'uSink', 'uDepth', 'uDpr', 'uAmp', 'uVidOn']) U[n] = gl.getUniformLocation(prog, n);
+  function mkTex(unit) {
+    const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+    for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+    return t;
+  }
+  const texText = mkTex(0), texVid = mkTex(1);
+  gl.uniform1i(U.uText, 0); gl.uniform1i(U.uVid, 1);
+
+  // title drawn once into a texture at its laid-out position (the shape never changes)
+  const tc = document.createElement('canvas'), tctx = tc.getContext('2d');
+  function drawTitle() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); gl.viewport(0, 0, canvas.width, canvas.height);
+    tc.width = canvas.width; tc.height = canvas.height;
+    const fsPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'));
+    const sr = stage.getBoundingClientRect();
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0); tctx.clearRect(0, 0, W, H);
+    tctx.font = `850 ${fsPx}px Archivo`; tctx.fillStyle = '#fff';
+    if ('letterSpacing' in tctx) tctx.letterSpacing = (-0.02 * fsPx).toFixed(2) + 'px';
+    for (const s of title.querySelectorAll('span')) {
+      const r = s.getBoundingClientRect(), base = s.querySelector('i').getBoundingClientRect().top;
+      tctx.fillText(s.textContent, r.left - sr.left, base - sr.top);
+    }
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texText);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+  drawTitle();
+
+  let vidOn = false, vidDirty = true;
+  const markFrame = () => { vidDirty = true; if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(markFrame); };
+  if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(markFrame);
+  function uploadVideo() {
+    if (video.readyState < 2) return;
+    if (!vidDirty && vidOn) return;
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texVid);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    if (!vidOn) { gl.uniform2f(U.uVidSize, video.videoWidth, video.videoHeight); vidOn = true; }
+    vidDirty = !('requestVideoFrameCallback' in video);
+  }
+
+  // --- scroll ---
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .1, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  const st = ScrollTrigger.create({ trigger: track, start: 'top top', end: 'bottom bottom' });
+  const c01 = v => Math.max(0, Math.min(1, v));
+  const ease = v => v * v * (3 - 2 * v);
+
+  let ft = [], last = performance.now();
+  gsap.ticker.add(() => {
+    const now = performance.now(); ft.push(now - last); last = now; if (ft.length > 60) ft.shift();
+    const t = reduce ? 0 : now / 1000, p = st.progress;
+    // 0–.5: the water climbs over the title; .4–1: the title sinks and the light goes
+    const level = H * (.78 - .86 * ease(c01(p / .5)));
+    const sink = H * .32 * Math.pow(c01((p - .4) / .6), 1.6);
+    const depth = ease(c01((p - .35) / .65));
+    clip(level, t);
+    // the meter sits in both layers, so the waterline clip colours it like everything else
+    const dTxt = (12 * ease(c01(p / .95))).toFixed(1).replace('.', ',') + ' m';
+    if (dTxt !== meters[0].textContent) for (const m of meters) m.textContent = dTxt;
+    uploadVideo();
+    gl.uniform2f(U.uRes, W * dpr, H * dpr); gl.uniform1f(U.uT, t); gl.uniform1f(U.uWater, level * dpr);
+    gl.uniform1f(U.uSink, sink * dpr); gl.uniform1f(U.uDepth, depth); gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uAmp, amp); gl.uniform1f(U.uVidOn, vidOn ? 1 : 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    const avg = ft.reduce((a, b) => a + b, 0) / ft.length; fpsEl.textContent = `${avg.toFixed(1)} ms · max ${Math.max(...ft).toFixed(0)}`;
+  });
+
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { fit(); drawTitle(); ScrollTrigger.refresh(); }, 150); });
+  window.__lab = { st, lenis, video };
+  document.documentElement.classList.remove('wait');
+});
+</script>
+</body>
+</html>
