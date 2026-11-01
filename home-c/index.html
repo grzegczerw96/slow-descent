@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · szkoła freedivingu, Gdynia</title>
+<meta name="description" content="Uczymy oddychać, zanim nauczymy nurkować. Kursy freedivingu w Gdyni i wyjazdy na głęboką wodę.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="../fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/archivo-var-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:block;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* Version C, the type. Paper and ink, heavy capitals against a small quiet text, nothing in between; the only colour on
+   the page is the water seen through the one letter O. Display fits the page, statement 58, section 104, body 18, meta 14. */
+:root{--ink:#0A0A0A;--paper:#E9ECEA;--foam:#E4F1F1;--deep:#06262E;--g:clamp(20px,3.9vw,56px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--paper)}
+html.wait body{visibility:hidden}
+body{font-family:Archivo,sans-serif;font-weight:400;color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.meta{font-size:14px;line-height:1.4;font-weight:500;font-variant-numeric:tabular-nums}
+.cap{font-weight:850;letter-spacing:-.022em;text-transform:uppercase;line-height:.96}
+.body{font-size:clamp(16px,1.3vw,19px);line-height:1.5}
+
+.stage{position:fixed;inset:0;height:100svh;overflow:hidden;background:var(--paper);z-index:0}
+.film{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;will-change:transform;background:#06262E}
+.scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(2,18,22,.34) 0,rgba(2,18,22,0) 20%,rgba(2,18,22,0) 44%,rgba(2,18,22,.62) 100%);opacity:0}
+.sheet{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.title{position:absolute;left:var(--g);top:50%;margin:0;font-size:var(--fs,200px);font-weight:850;letter-spacing:-.02em;line-height:.86;white-space:nowrap;text-transform:uppercase;transform:translateY(-50%)}
+.title .ln{display:block;width:max-content}
+.title .l{display:inline-block;will-change:transform}
+.title .o{visibility:hidden}
+.title i{display:inline-block;width:0;height:0;vertical-align:baseline}
+.title .ln{padding:.06em 0 .04em;margin:-.06em 0 -.04em}
+html.intro .title .ln{clip-path:inset(0)}
+
+.lead{position:absolute;left:var(--g);bottom:var(--g);font-size:clamp(18px,1.7vw,24px);line-height:1.28;letter-spacing:-.01em;font-weight:400}
+.say{position:absolute;left:var(--g);bottom:var(--g);width:min(46vw,700px);color:var(--foam);font-size:clamp(30px,4vw,62px);line-height:1.03;visibility:hidden;will-change:transform,opacity,filter}
+#s4{width:min(33vw,480px)}
+
+.nav{position:fixed;left:var(--g);right:var(--g);top:calc(var(--g)*.62);z-index:30;display:flex;justify-content:space-between;align-items:flex-start;font-size:15px;line-height:1.35;font-weight:500;transition:color .4s,transform .7s cubic-bezier(.2,.7,.2,1);will-change:transform}
+.nav .sub{display:block;font-weight:400;opacity:.62}
+.meter{position:fixed;right:var(--g);bottom:var(--g);z-index:29;text-align:right;line-height:1;transition:color .4s;will-change:opacity}
+.meter small{display:block;font-size:12px;opacity:.7;margin-bottom:6px}
+.meter b{display:block;font-size:clamp(30px,3.1vw,44px);font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+html.fg-light .nav,html.fg-light .meter{color:var(--foam)}
+
+.menu{position:fixed;inset:0;z-index:28;background:var(--ink);color:var(--paper);visibility:hidden;clip-path:inset(0 0 100% 0);display:flex;flex-direction:column;justify-content:flex-end;padding:var(--g)}
+.menu a{display:block;overflow:hidden;font-size:min(8.6vw,13.4svh);line-height:1;font-weight:850;letter-spacing:-.022em;text-transform:uppercase;padding-top:.05em}
+.menu a span{display:block;transition:opacity .3s}
+.menu nav:hover a span{opacity:.3}.menu nav a:hover span{opacity:1}
+.menu .meta{margin-top:40px;opacity:.7}
+html.menu-open .nav{color:var(--paper);transform:none!important}
+html.menu-open .meter{visibility:hidden}
+
+main{position:relative;z-index:1}
+.spacer{height:975svh}
+
+/* manifesto: one sentence, read word by word as the page moves */
+.mani{position:relative;height:320svh;background:var(--ink);color:var(--paper)}
+.mani .pin{position:sticky;top:0;height:100svh;padding:0 var(--g);display:flex;flex-direction:column;justify-content:center}
+.mani h2{font-size:clamp(34px,6.5vw,112px);max-width:15.4em;line-height:1}
+.mani h2 span{transition:none}
+.mani .body{position:absolute;right:var(--g);bottom:var(--g);width:min(30vw,420px);opacity:0}
+
+/* courses: three steps, each one further along and further down */
+.steps{background:var(--ink);color:var(--paper);padding:18vh var(--g) 22vh}
+.steps h2,.rules h2{font-size:clamp(46px,7.2vw,124px)}
+.stairs{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,48px);margin-top:14vh}
+.step:nth-child(2){margin-top:20vh}.step:nth-child(3){margin-top:40vh}
+.step{border-top:1px solid rgba(233,236,234,.28);padding-top:18px}
+.step .d{display:block;font-size:clamp(64px,9.4vw,168px);line-height:.9;font-weight:850;letter-spacing:-.03em;margin-top:40px}
+.step h3{font-size:clamp(22px,2vw,30px);font-weight:500;letter-spacing:-.018em;line-height:1.12;margin-top:40px}
+.step .body{margin-top:14px;opacity:.72;max-width:26em}
+.step dl{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;margin-top:26px}
+.step dt{opacity:.56;font-weight:400}
+.go{display:inline-block;margin-top:28px;font-size:15px;font-weight:500;border-bottom:1px solid currentColor;padding-bottom:3px;transition:opacity .25s}
+.go:hover{opacity:.56}
+
+/* trips: a held frame, the names lit one after another */
+.trips{position:relative;height:340svh;background:var(--deep);color:var(--foam)}
+.trips .pin{position:sticky;top:0;height:100svh;padding:calc(var(--g)*.62 + 72px) var(--g) var(--g);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.trips h2{font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;line-height:1.35}
+.trip{display:grid;grid-template-columns:8fr 4fr;align-items:end;gap:24px;opacity:.2;transition:opacity .6s cubic-bezier(.2,.7,.2,1);border-top:1px solid rgba(228,241,241,.28);padding-top:14px}
+.trip.on{opacity:1}
+.trip h3{font-size:min(13vw,19svh);line-height:.94}
+.trip .info{opacity:0;transform:translateY(8px);transition:opacity .5s,transform .7s cubic-bezier(.2,.7,.2,1);padding-bottom:.6em}
+.trip.on .info{opacity:1;transform:none}
+.trip .info p+p{margin-top:12px}
+
+.rules{background:var(--paper);padding:24vh var(--g) 24vh;position:relative}
+.rules ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(24px,3vw,48px);margin-top:18vh}
+.rules li{border-top:1px solid rgba(10,10,10,.24);padding-top:18px}
+.rules .n{display:block;font-size:clamp(56px,7vw,116px);line-height:.9;font-weight:850;letter-spacing:-.03em;color:rgba(10,10,10,.14)}
+.rules h4{font-size:clamp(20px,1.8vw,26px);font-weight:600;line-height:1.14;letter-spacing:-.015em;margin-top:28px}
+.rules li p{font-size:15px;line-height:1.5;opacity:.72;margin-top:12px;max-width:24em}
+
+/* contact: the second and last time the letter O opens */
+.end{background:var(--paper);padding:13svh var(--g) 0;position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:space-between}
+.big{font-size:min(16.8vw,24.5svh);font-weight:850;letter-spacing:-.022em;line-height:.9;text-transform:uppercase;white-space:nowrap;margin-left:-.02em}
+.big .wo{display:inline-block;position:relative;width:.7314em;height:.7115em;vertical-align:baseline;margin:0 .045em;bottom:-.012em}
+.big .wo video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:74% 50%;clip-path:url(#oclip);background:#06262E}
+.big .wo em{position:absolute;inset:0}
+.end .cols{display:grid;grid-template-columns:7fr 5fr;gap:6vw;margin-top:5svh;align-items:start}
+.end .body{max-width:30em;opacity:.8}
+.end .mail{display:inline-block;font-size:clamp(22px,2.2vw,32px);letter-spacing:-.02em;margin-top:24px;border-bottom:1px solid currentColor;padding-bottom:3px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+form label:nth-child(3){grid-column:1/3}
+label{display:block;font-size:13px;font-weight:500}
+input{display:block;width:100%;font:inherit;font-size:19px;font-weight:400;color:inherit;background:none;border:0;border-bottom:1px solid rgba(10,10,10,.3);padding:10px 0 12px;outline:0;border-radius:0;transition:border-color .25s}
+input:focus{border-color:var(--ink)}
+form button{grid-column:1/3;justify-self:start;font-size:16px;font-weight:600;background:var(--ink);color:var(--paper);padding:15px 26px;border-radius:999px;margin-top:8px;transition:opacity .25s}
+form button:hover{opacity:.78}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 40px;margin-top:6svh;padding-bottom:calc(var(--g)*.7)}
+.foot a:hover{opacity:.56}
+
+@media (max-width:760px){
+  .say,#s4{width:auto;right:var(--g);bottom:calc(var(--g) + 72px);font-size:30px}
+  #s4{top:12svh;bottom:auto}
+  .mani h2{font-size:9.4vw}
+  .mani .body{position:static;width:auto;margin-top:32px}
+  .stairs{grid-template-columns:1fr;gap:56px;margin-top:9vh}
+  .step:nth-child(2){margin:0 0 0 10vw}.step:nth-child(3){margin:0 0 0 20vw}
+  .trip{grid-template-columns:1fr;gap:6px}
+  .trip h3{font-size:15vw}
+  .trip .info{padding-bottom:6px;min-height:92px}
+  .trips .pin{justify-content:flex-start;gap:18px}
+  .rules ol{grid-template-columns:1fr 1fr;margin-top:9vh}
+  .end .cols{grid-template-columns:1fr;gap:48px;margin-top:6vh}
+  .big{font-size:17.4vw}
+  .end{padding-top:12svh}
+  form{grid-template-columns:1fr}form label:nth-child(3),form button{grid-column:auto}
+  .rules{padding:16vh var(--g)}.steps{padding:14vh var(--g)}
+}
+</style>
+<script>document.documentElement.classList.add('wait', 'intro');</script>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+<script src="../lib/home-core-1.js" defer></script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="oclip" clipPathUnits="objectBoundingBox"><path id="oclipp"/></clipPath></defs></svg>
+
+<div class="stage">
+  <video class="film" muted playsinline preload="auto" aria-hidden="true"></video>
+  <div class="scrim"></div>
+  <canvas class="sheet" aria-hidden="true"></canvas>
+  <h1 class="title" aria-label="Slow Descent"><span class="ln" aria-hidden="true"><span class="l">S</span><span class="l">L</span><span class="l o">O</span><span class="l">W</span><i></i></span><span class="ln" aria-hidden="true"><span class="l">D</span><span class="l">E</span><span class="l">S</span><span class="l">C</span><span class="l">E</span><span class="l">N</span><span class="l">T</span><i></i></span></h1>
+  <p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p>
+  <p class="say cap" id="s1">Tętno zwalnia i&nbsp;już teraz nie musisz nic robić.</p>
+  <p class="say cap" id="s2">Myśli się porządkują, a&nbsp;Ty przestajesz płynąć.</p>
+  <p class="say cap" id="s3">Ciało pamięta odruch, z&nbsp;którym się urodziłeś.</p>
+  <p class="say cap" id="s4">Teraz zawracasz, od teraz znasz siebie jeszcze lepiej.</p>
+</div>
+
+<header class="nav">
+  <p><a href="#" data-go="0">Slow Descent®</a><span class="sub">Szkoła freedivingu, Gdynia</span></p>
+  <button data-menu aria-label="Menu">Menu</button>
+</header>
+<p class="meter" aria-hidden="true"><small>głębokość</small><b>0,0 m</b></p>
+
+<div class="menu" aria-hidden="true">
+  <nav>
+    <a href="#" data-go="2.6"><span>Zejście</span></a>
+    <a href="#kursy" data-go="#kursy"><span>Kursy</span></a>
+    <a href="#wyjazdy" data-go="#wyjazdy"><span>Wyjazdy</span></a>
+    <a href="#zasady" data-go="#zasady"><span>Zasady</span></a>
+    <a href="#kontakt" data-go="#kontakt"><span>Kontakt</span></a>
+  </nav>
+  <p class="meta">hej@slowdescent.pl</p>
+</div>
+
+<main>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <section class="mani" data-tone="light">
+    <div class="pin">
+      <h2 class="cap" id="mani">Pod wodą nie ma powiadomień. Jest tylko następny metr i&nbsp;to, jak spokojnie o&nbsp;nim myślisz.</h2>
+      <p class="body">To trening uwagi. Tętno zwalnia, myśli się porządkują, a&nbsp;ciało przypomina sobie odruch, który ma od urodzenia. Uczymy go odzyskać, metr po metrze.</p>
+    </div>
+  </section>
+
+  <section class="steps" id="kursy" data-tone="light">
+    <h2 class="cap" data-rv="lines">Trzy kroki<br>w&nbsp;dół.</h2>
+    <div class="stairs">
+      <article class="step" data-rv><span class="meta">Krok pierwszy</span><span class="d">5 m</span><h3>Pierwszy oddech</h3><p class="body">Statyka, oddech przeponowy i&nbsp;pierwsze 25 metrów pod wodą. Wychodzisz z&nbsp;basenu zaskoczony, ile naprawdę wytrzymujesz.</p><dl class="meta"><dt>Gdzie</dt><dd>Basen, Gdynia</dd><dt>Ile</dt><dd>1 dzień, co sobotę</dd><dt>Cena</dt><dd>290 zł</dd></dl></article>
+      <article class="step" data-rv><span class="meta">Krok drugi</span><span class="d">20 m</span><h3>Do 20 metrów</h3><p class="body">Wyrównywanie ciśnienia, praca z&nbsp;liną i&nbsp;asekuracja partnera. Kończysz z&nbsp;certyfikatem i&nbsp;spokojem na dwudziestym metrze.</p><dl class="meta"><dt>Gdzie</dt><dd>Jezioro</dd><dt>Ile</dt><dd>4 dni, maj–wrzesień</dd><dt>Cena</dt><dd>1 450 zł</dd></dl></article>
+      <article class="step" data-rv><span class="meta">Krok trzeci</span><span class="d">40 m</span><h3>Głębia</h3><p class="body">Zejścia na 30–40 metrów i&nbsp;trening pod termokliną. Dla tych, którzy chcą zrozumieć, dlaczego to wciąga.</p><dl class="meta"><dt>Gdzie</dt><dd>Morze</dd><dt>Ile</dt><dd>6 dni, luty i&nbsp;maj</dd><dt>Cena</dt><dd>3 200 zł</dd></dl><a class="go" href="#kontakt" data-go="#kontakt">Zapisz się na kurs</a></article>
+    </div>
+  </section>
+
+  <section class="trips" id="wyjazdy" data-tone="light">
+    <div class="pin">
+      <h2>Dokąd schodzimy w&nbsp;2027</h2>
+      <div>
+        <article class="trip"><h3 class="cap">Dahab</h3><div class="info meta"><p>Egipt. Blue Hole i&nbsp;laguna. Najspokojniejsza głębia, jaką znamy.</p><p>14–23.02 · do 40 m · od 6 900 zł</p></div></article>
+        <article class="trip"><h3 class="cap">Gozo</h3><div class="info meta"><p>Malta. Jaskinie, przejrzysta woda i&nbsp;22°C już w&nbsp;maju.</p><p>08–16.05 · do 30 m · od 5 400 zł</p></div></article>
+        <article class="trip"><h3 class="cap">Hańcza</h3><div class="info meta"><p>Polska. Najgłębsze jezioro w&nbsp;kraju. Zimno, ciemno i&nbsp;pięknie.</p><p>11–14.09 · do 25 m · 1 450 zł</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="rules" id="zasady" data-tone="dark">
+    <h2 class="cap" data-rv="lines">Głębokość to skutek.<br>Zasady są stałe.</h2>
+    <ol>
+      <li data-rv><span class="n">01</span><h4>Nigdy sam</h4><p>Każde zejście ma partnera na powierzchni, który patrzy tylko na ciebie. Także na basenie.</p></li>
+      <li data-rv><span class="n">02</span><h4>Oddech przed głębią</h4><p>Zanim zejdziesz na dziesięć metrów, nauczysz się trzech minut spokojnej statyki.</p></li>
+      <li data-rv><span class="n">03</span><h4>Lina, boja, przeciwwaga</h4><p>Na wodach otwartych trenujemy zawsze przy linie. Nikt nie zgubi kierunku.</p></li>
+      <li data-rv><span class="n">04</span><h4>Mała grupa</h4><p>Czterech kursantów na instruktora. Nikt nie czeka w&nbsp;kolejce i&nbsp;nikt się nie spieszy.</p></li>
+    </ol>
+  </section>
+
+  <section class="end" id="kontakt" data-tone="dark">
+    <h2 class="big" aria-label="Odezwij się"><span class="wo" aria-hidden="true"><video muted playsinline loop preload="none"></video></span>dezwij<br>się.</h2>
+    <div class="cols">
+      <div>
+        <p class="body" data-rv>Odpowiadamy w&nbsp;ciągu doby. Jeśli boisz się wody, napisz o&nbsp;tym wprost. To bardzo dobry początek.</p>
+        <a class="mail" data-rv href="mailto:hej@slowdescent.pl">hej@slowdescent.pl</a>
+      </div>
+      <form data-rv>
+        <label>Imię<input name="imie" autocomplete="given-name" required></label>
+        <label>E-mail<input name="mail" type="email" autocomplete="email" required></label>
+        <label>Na jakim etapie jesteś?<input name="etap"></label>
+        <button type="submit">Wyślij</button>
+      </form>
+    </div>
+    <div class="foot meta"><span>Gdynia, Bulwar Nadmorski</span><span>pon.–pt. 9:00–17:00</span><a href="#">Instagram</a><a href="#">YouTube</a><a href="#" data-go="0">Do góry</a></div>
+  </section>
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const { c01, lerp, ss, reduce, beat, onFrame, scrub, load } = Home;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const root = document.documentElement, stage = $('.stage'), film = $('.film'), sheet = $('.sheet'), ctx = sheet.getContext('2d'), scrim = $('.scrim');
+  const title = $('.title'), lead = $('.lead'), meterEl = $('.meter'), meterB = $('.meter b'), navEl = $('.nav');
+  const letters = $$('.title .l:not(.o)'), oEl = $('.title .o');
+
+  // the outer contour of Archivo's O at weight 850 (font units, y up): water fills the whole letter, counter included
+  const O_D = 'M410.293 -12Q295.576 -12 213.717 27.658Q131.859 67.315 88.429 146.701Q45 226.087 45 343.772Q45 462.457 88.429 541.342Q131.859 620.228 213.717 659.886Q295.576 699.543 410.293 699.543Q526.01 699.543 607.755 659.886Q689.5 620.228 732.929 541.342Q776.358 462.457 776.358 343.772Q776.358 226.087 732.929 146.701Q689.5 67.315 607.755 27.658Q526.01 -12 410.293 -12Z';
+  const O_CX = 410.68, O_CY = 343.77, O_R = 366;
+  const oPath = new Path2D(O_D);
+  // the same shape for the O of "Odezwij", as a clip in the 0..1 box of its element
+  $('#oclipp').setAttribute('transform', `matrix(${1 / 731.36} 0 0 ${-1 / 711.54} ${-45 / 731.36} ${699.54 / 711.54})`);
+  $('#oclipp').setAttribute('d', O_D);
+
+  // where the woman is in the film: [second, x0, y0, x1, y1], see tools/subject_track.py
+  const TRACK = [[0.0,0.562,0.003,0.695,0.61],[0.5,0.557,0.003,0.757,0.573],[1.0,0.541,0.003,0.776,0.476],[1.5,0.521,0.003,0.769,0.446],[2.0,0.503,0.003,0.745,0.457],[2.5,0.494,0.003,0.768,0.46],[3.0,0.491,0.004,0.787,0.468],[3.5,0.488,0.003,0.812,0.486],[4.0,0.495,0.004,0.833,0.504],[4.5,0.498,0.006,0.894,0.525],[5.0,0.5,0.006,0.985,0.551],[5.5,0.502,0.018,0.994,0.576],[6.0,0.511,0.013,0.991,0.596],[6.5,0.513,0.007,0.994,0.611],[7.0,0.512,0.01,0.995,0.624],[7.5,0.514,0.09,0.995,0.632],[8.0,0.512,0.099,0.997,0.632],[8.5,0.509,0.071,0.995,0.625],[9.0,0.505,0.074,0.995,0.625],[9.5,0.502,0.221,0.993,0.622],[10.0,0.5,0.307,0.996,0.617],[10.5,0.497,0.243,0.995,0.613],[11.0,0.491,0.149,0.996,0.604],[11.5,0.49,0.113,0.996,0.603],[12.0,0.492,0.151,0.997,0.607],[12.5,0.494,0.212,0.995,0.61],[13.0,0.496,0.126,0.995,0.604],[13.5,0.492,0.196,0.995,0.613],[14.0,0.497,0.094,0.995,0.617],[14.5,0.501,0.144,0.995,0.622],[15.0,0.505,0.19,0.997,0.632],[15.5,0.506,0.215,0.997,0.647],[16.0,0.509,0.169,0.996,0.658],[16.5,0.518,0.135,0.998,0.665],[17.0,0.52,0.119,0.998,0.674],[17.5,0.527,0.156,0.996,0.676],[18.0,0.529,0.2,0.998,0.685],[18.5,0.53,0.188,0.997,0.686],[19.0,0.534,0.149,0.997,0.681],[19.5,0.53,0.139,0.997,0.684],[20.0,0.524,0.221,0.998,0.686],[20.5,0.516,0.168,0.956,0.694],[21.0,0.512,0.129,0.966,0.7],[21.5,0.513,0.1,0.987,0.7],[22.0,0.513,0.071,0.964,0.701],[22.5,0.517,0.082,0.937,0.728],[23.0,0.52,0.124,0.926,0.758],[23.5,0.523,0.136,0.935,0.772],[24.0,0.524,0.135,0.935,0.768],[24.5,0.52,0.118,0.914,0.774],[25.0,0.518,0.128,0.87,0.771],[25.5,0.51,0.151,0.885,0.757],[26.0,0.506,0.107,0.942,0.749],[26.5,0.498,0.093,0.958,0.751],[27.0,0.485,0.135,0.951,0.753],[27.5,0.47,0.256,0.887,0.757],[28.0,0.461,0.243,0.848,0.765],[28.5,0.448,0.244,0.807,0.769],[29.0,0.432,0.281,0.762,0.76],[29.5,0.416,0.367,0.755,0.756],[30.0,0.401,0.343,0.769,0.764],[30.5,0.388,0.328,0.767,0.774],[31.0,0.379,0.35,0.735,0.776],[31.5,0.373,0.392,0.702,0.772],[32.0,0.373,0.415,0.689,0.762],[32.5,0.379,0.393,0.684,0.749],[33.0,0.383,0.375,0.69,0.732],[33.5,0.391,0.34,0.71,0.713],[34.0,0.398,0.317,0.72,0.692],[34.5,0.403,0.318,0.72,0.695]];
+  const track = t => {
+    const f = c01(t / 34.5) * (TRACK.length - 1), i = Math.floor(f), a = TRACK[i], b = TRACK[Math.min(TRACK.length - 1, i + 1)], k = f - i;
+    return [1, 2, 3, 4].map(n => lerp(a[n], b[n], k));
+  };
+
+  await Home.init({ resize: fit });
+  await document.fonts.load('850 100px Archivo'); await document.fonts.ready;
+
+  // --- the score, in screens of scroll ---
+  const OPEN = [.03, 1.55], FILM_T = [4, 34], FILM_H = [0, 9.75];
+  beat($('#s1'), [1.95, 2.3, 3.25, 3.6], { name: 's1' });
+  beat($('#s2'), [3.9, 4.25, 5.2, 5.55], { name: 's2' });
+  beat($('#s3'), [5.85, 6.2, 7.15, 7.5], { name: 's3' });
+  beat($('#s4'), innerWidth <= 760 ? [8.05, 8.3, 8.95, 9.15] : [7.75, 8.0, 8.6, 8.8], { name: 's4' });
+
+  // --- layout ---
+  let W, H, mobile, dpr, fs, O = { x: 0, y: 0 }, base = [], secs = {}, g;
+  function fit() {
+    W = Home.W; H = Home.H; mobile = W <= 760;
+    g = parseFloat(getComputedStyle(navEl).left);
+    root.style.setProperty('--fs', '100px');
+    const wordW = $$('.title .ln')[1].getBoundingClientRect().width;
+    fs = Math.min(100 * (W - 2 * g) / wordW, H * .5 / 1.72);
+    root.style.setProperty('--fs', fs.toFixed(2) + 'px');
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    sheet.width = Math.round(W * dpr); sheet.height = Math.round(H * dpr);
+    // where each letter rests (without the moves below), and where the O sits on its baseline
+    const prev = letters.map(l => l.style.transform); letters.forEach(l => { l.style.transform = 'none'; });
+    const br = oEl.parentElement.querySelector('i').getBoundingClientRect(), or = oEl.getBoundingClientRect();
+    O = { x: or.left, y: br.top };
+    base = letters.map(l => { const r = l.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, top: l.parentElement === oEl.parentElement }; });
+    letters.forEach((l, i) => { l.style.transform = prev[i]; });
+    secs = { mani: $('.mani').offsetTop, steps: $('.steps').offsetTop, trips: $('.trips').offsetTop, rules: $('.rules').offsetTop, end: $('.end').offsetTop };
+    lastDraw = '';
+  }
+  let lastDraw = '';
+  fit();
+  root.classList.remove('wait');
+
+  // --- the sheet of paper with the letter O cut out of it ---
+  const oc = { z: reduce ? 1 : 0 };
+  function draw(z, cx, cy) {
+    const key = [z.toFixed(4), cx.toFixed(1), cy.toFixed(1)].join();
+    if (key === lastDraw) return; lastDraw = key;
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#E9ECEA'; ctx.fillRect(0, 0, sheet.width, sheet.height);
+    ctx.globalCompositeOperation = 'destination-out';
+    const k = fs / 1000 * z * dpr;
+    ctx.setTransform(k, 0, 0, -k, cx * dpr - O_CX * k, cy * dpr + O_CY * k);
+    ctx.fill(oPath);
+  }
+
+  // --- first seconds: the letters rise, the O opens like a drop, she is already moving inside ---
+  const intro = { t: .9 };
+  if (!reduce) {
+    gsap.fromTo(letters, { yPercent: 112 }, { yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: .03, delay: .1, onComplete: () => { root.classList.remove('intro'); gsap.set(letters, { clearProps: 'transform' }); introDone = true; } });
+    gsap.to(oc, { z: 1, duration: 1.5, ease: 'expo.out', delay: .55 });
+    gsap.fromTo([lead, meterEl, navEl], { opacity: 0 }, { opacity: 1, duration: 1.1, delay: 1.1, ease: 'power2.out' });
+    gsap.to(intro, { t: FILM_T[0], duration: 5.5, ease: 'sine.out', delay: .4 });
+  } else { root.classList.remove('intro'); intro.t = FILM_T[0]; }
+  let introDone = reduce;
+  load([{ v: film, src: 'film-teal.mp4' }], 'media/');
+
+  // --- manifesto words ---
+  const mani = $('#mani');
+  (function splitWords() {
+    const walk = n => { for (const c of [...n.childNodes]) { if (c.nodeType === 3) { const f = document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) { f.append(' '); return; } const s = document.createElement('span'); s.textContent = w.replace(/ /g, ' '); f.append(s); }); c.replaceWith(f); } } };
+    walk(mani);
+  })();
+  const words = [...mani.querySelectorAll('span')], maniBody = $('.mani .body'), wordsLast = words.map(() => -1);
+
+  const trips = $$('.trip');
+  let titleGone = false, lastTrip = -1, lastMeter = '', navHidden = false, lastY = 0, oVideo = $('.big video'), oLoaded = false;
+  function setMeter(D) { const s = Math.max(0, D).toFixed(1).replace('.', ',') + ' m'; if (s !== lastMeter) { meterB.textContent = s; lastMeter = s; } }
+
+  onFrame((h, y, now) => {
+    const open = c01((h - OPEN[0]) / (OPEN[1] - OPEN[0]));
+    const onStage = y < secs.mani + H * .2;
+    if (stage.style.visibility !== (onStage ? 'visible' : 'hidden')) stage.style.visibility = onStage ? 'visible' : 'hidden';
+
+    if (onStage) {
+      // film time: slow drift at the start, then the whole dive across the opening and the statements
+      const tNow = Math.min(FILM_T[1], intro.t + h / FILM_H[1] * (FILM_T[1] - FILM_T[0]));
+      scrub(film, tNow);
+      const tr = track(tNow), fx = (tr[0] + tr[2]) / 2, fy = (tr[1] + tr[3]) / 2;
+
+      // the O grows exponentially (steady to the eye) from its place to the middle of the screen, until it holds the screen
+      const Zmax = Math.hypot(W, H) / (O_R * fs / 1000) * .9;
+      const ep = Math.pow(ss(open), 1.85), z = oc.z * Math.pow(Zmax, ep);
+      const oX0 = O.x + O_CX * fs / 1000, oY0 = O.y - O_CY * fs / 1000;
+      const mv = ss((open - .1) / .7), cx = lerp(oX0, W / 2, mv), cy = lerp(oY0, H / 2, mv);
+      const covered = open >= .999;
+      if (!covered) { if (sheet.style.display === 'none') sheet.style.display = 'block'; draw(z, cx, cy); }
+      else if (sheet.style.display !== 'none') sheet.style.display = 'none';
+
+      // the film: inside the letter she fits in the O, on the screen she fills it
+      const covS = Math.max(W / 1600, H / 900), covX = (W - 1600 * covS) * (mobile ? .72 : .62), covY = (H - 900 * covS) * .5;
+      const inO = 2 * O_R * fs / 1000 * 1.08 / (Math.max(.36, tr[3] - tr[1]) * 900);
+      const fe = ss(open * 1.05), sMin = Math.min(2.2 * O_R * fs / 1000 * z / 900, covS), sNow = Math.max(lerp(inO, covS, fe), sMin);
+      const toX = cx - fx * 1600 * sNow, toY = cy - fy * 900 * sNow;
+      let x = lerp(toX, covX, fe), yy = lerp(toY, covY, fe);
+      // the film always reaches past the edges of the letter, so the opening never shows anything but water
+      const rO = O_R * fs / 1000 * z * 1.04;
+      x = Math.min(x, Math.max(cx - rO, 0)); x = Math.max(x, Math.min(cx + rO, W) - 1600 * sNow);
+      yy = Math.min(yy, Math.max(cy - rO, 0)); yy = Math.max(yy, Math.min(cy + rO, H) - 900 * sNow);
+      film.style.transform = `translate3d(${x.toFixed(1)}px,${yy.toFixed(1)}px,0) scale(${sNow.toFixed(4)})`;
+      scrim.style.opacity = ss((open - .75) / .25);
+
+      // the letters make room before the O reaches them: left and right of it sideways, the second line down
+      if (introDone) {
+        for (let i = 0; i < letters.length; i++) {
+          const b = base[i], l = letters[i];
+          let dx = 0, dy = 0;
+          if (b.top) {
+            const left = b.x < oX0, away = Math.abs(b.x + b.w / 2 - oX0);
+            const k = ss((open - .02 - (1 - away / W) * .02) / .42);
+            dx = (left ? -1 : 1) * k * k * (left ? b.x + b.w + 40 : W - b.x + 40);
+          } else {
+            const d = Math.abs(b.x + b.w / 2 - oX0) / W, k = ss((open - .02 - (1 - d) * .06) / .34);
+            dy = k * k * (H - b.y + 40);
+          }
+          const tf = dx || dy ? `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0)` : 'none';
+          if (l._tf !== tf) { l.style.transform = tf; l._tf = tf; }
+        }
+        const lo = 1 - ss((h - .01) / .22);
+        lead.style.opacity = lo; lead.style.visibility = lo <= 0 ? 'hidden' : 'visible';
+        lead.style.filter = lo < 1 ? `blur(${((1 - lo) * 6).toFixed(1)}px)` : 'none';
+      }
+    }
+
+    // nav and meter take the tone of what is behind them; the bar steps aside while reading downwards, back when going up
+    let light = open > .68;
+    for (const s of $$('main section')) { const r = s.getBoundingClientRect(); if (r.top <= 40 && r.bottom > 40) light = s.dataset.tone === 'light'; }
+    root.classList.toggle('fg-light', light);
+    const natural = y > secs.mani + H * .9, dirDown = y > lastY + .5, dirUp = y < lastY - .5;
+    if (natural && dirDown && !navHidden) { navHidden = true; navEl.style.transform = 'translateY(-140px)'; }
+    if ((dirUp || !natural) && navHidden) { navHidden = false; navEl.style.transform = 'none'; }
+    lastY = y;
+    if (y > secs.mani - H) { setMeter(40); } else setMeter(c01(h / 8.75) * 40);
+    // the meter clears the way for the falling letters and returns on the film
+    if (introDone) meterEl.style.opacity = (1 - ss((h - .01) / .12)) + ss((h - 1.3) / .3) - (y > secs.mani - H * .96 ? ss((y - (secs.mani - H * .96)) / (H * .16)) : 0);
+    if (h > 1 !== titleGone) { titleGone = h > 1; title.style.visibility = titleGone ? 'hidden' : 'visible'; }
+
+    // manifesto: each word comes up from the dark in reading order, then the small text answers it
+    const mp = c01((y - secs.mani - H * .05) / ($('.mani').offsetHeight - H * 1.35));
+    words.forEach((w, i) => {
+      const a = .12 + .88 * ss((mp * 1.14 - i / words.length * .92) / .12);
+      if (Math.abs(a - wordsLast[i]) > .004) { w.style.opacity = a.toFixed(3); wordsLast[i] = a; }
+    });
+    maniBody.style.opacity = ss((mp - .9) / .1);
+    maniBody.style.transform = `translateY(${(1 - ss((mp - .9) / .1)) * 10}px)`;
+
+    // trips: one lit at a time through the held frame
+    const tp = c01((y - secs.trips) / ($('.trips').offsetHeight - H));
+    const ti = Math.min(trips.length - 1, Math.floor(tp * trips.length));
+    if (ti !== lastTrip) { trips.forEach((t, i) => t.classList.toggle('on', i === ti)); lastTrip = ti; }
+
+    // the O of the last section plays only once it is near
+    if (!oLoaded && y > secs.rules) { oLoaded = true; oVideo.src = 'media/' + 'film-teal.mp4'; oVideo.currentTime = 8; oVideo.playbackRate = .6; oVideo.play().catch(() => {}); }
+  });
+
+  // for tools/home_check.py
+  window.__home.subject = () => {
+    const h = Home.lenis.scroll / H, open = c01((h - OPEN[0]) / (OPEN[1] - OPEN[0]));
+    if (open < .999) {
+      const ep = Math.pow(ss(open), 1.85), z = oc.z * Math.pow(Math.hypot(W, H) / (O_R * fs / 1000) * .9, ep), mv = ss((open - .1) / .7);
+      const cx = lerp(O.x + O_CX * fs / 1000, W / 2, mv), cy = lerp(O.y - O_CY * fs / 1000, H / 2, mv), r = O_R * fs / 1000 * z;
+      return { left: cx - r, top: cy - r, right: cx + r, bottom: cy + r, name: 'okno O', soft: true };
+    }
+    if (Home.lenis.scroll > secs.mani - H) return null;
+    const t = Math.min(FILM_T[1], intro.t + h / FILM_H[1] * (FILM_T[1] - FILM_T[0])), r = track(t);
+    const sc = Math.max(W / 1600, H / 900), ox = (W - 1600 * sc) * (mobile ? .72 : .62), oy = (H - 900 * sc) * .5;
+    return { left: ox + r[0] * 1600 * sc, top: oy + r[1] * 900 * sc, right: ox + r[2] * 1600 * sc, bottom: oy + r[3] * 900 * sc, name: 'kobieta' };
+  };
+});
+</script>
+</body>
+</html>

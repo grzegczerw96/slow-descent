@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · plan ruchu</title>
+<link rel="icon" href="data:,">
+<style>
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+2000-206F,U+2212}
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0100-02BA,U+1E00-1E9F}
+:root{--ink:#0A0A0A;--paper:#E9ECEA;--g:clamp(20px,3.9vw,56px)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Archivo,sans-serif;-webkit-font-smoothing:antialiased;padding:var(--g)}
+a{color:inherit}
+h1{font-size:clamp(44px,6.4vw,100px);font-weight:400;letter-spacing:-.04em;line-height:1}
+.rules{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:32px 40px;margin:72px 0 120px}
+.rules li{border-top:1px solid rgba(10,10,10,.24);padding-top:14px}
+.rules h3{font-size:20px;font-weight:500;letter-spacing:-.012em}
+.rules p{font-size:15px;line-height:1.5;opacity:.74;margin-top:8px;max-width:30em}
+section{margin-bottom:120px}
+header{display:grid;grid-template-columns:4fr 6fr 2fr;gap:40px;align-items:baseline;margin-bottom:40px}
+h2{font-size:clamp(28px,3vw,44px);font-weight:400;letter-spacing:-.03em}
+h2 a{text-decoration:none;border-bottom:1px solid currentColor}
+header p{font-size:17px;line-height:1.5;opacity:.8}
+.m{font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+.g{position:relative}
+.ax{position:relative;height:22px;margin-left:calc(24% + 16px);margin-right:88px;border-bottom:1px solid rgba(10,10,10,.3)}
+.ax em{position:absolute;bottom:4px;font-style:normal;font-size:12px;font-variant-numeric:tabular-nums;opacity:.6}
+.r{display:grid;grid-template-columns:24% 1fr 72px;gap:16px;align-items:center;height:26px;border-bottom:1px solid rgba(10,10,10,.08);font-size:13px}
+.l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t{position:relative;height:10px}
+.t i{position:absolute;top:0;bottom:0}
+.n{text-align:right;font-variant-numeric:tabular-nums;opacity:.6}
+.f{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:40px}
+figure{position:relative}
+img{display:block;width:100%;height:auto}
+figcaption{font-size:12px;margin-top:6px;font-variant-numeric:tabular-nums;opacity:.6}
+</style>
+</head>
+<body>
+<h1>Plan ruchu</h1>
+<ul class="rules">
+  <li><h3>Jedno zdanie naraz</h3><p>Każdy tekst przychodzi, trzyma się i odchodzi na własnym odcinku przewijania. Następny wchodzi dopiero, gdy poprzedni zniknął.</p></li>
+  <li><h3>Dłużej stoi, niż się rusza</h3><p>Wejście i wyjście zajmują około 0,3 ekranu, a stan pełny co najmniej 1 ekran. Czytanie nie wymaga łapania tekstu w locie.</p></li>
+  <li><h3>Strona nie staje w pół drogi</h3><p>Gdy przewijanie ustanie w trakcie przenikania, strona sama je kończy, w kierunku, w którym szedł czytelnik. Każdy ruch kółkiem przejmuje kontrolę z powrotem.</p></li>
+  <li><h3>Sama prowadzi</h3><p>Po wczytaniu coś już się dzieje: woda opada, nurek nadpływa, O się otwiera. Bez napisu „przewiń”. Ten sam element (woda, film, głębokościomierz) przechodzi przez całą stronę.</p></li>
+  <li><h3>Tekst obok postaci</h3><p>Położenie nurka zmierzone jest w każdej chwili nagrania. Test przechodzi całą stronę co 0,1 ekranu i sprawdza, czy żadna linia nie wchodzi na inną linię ani na postać.</p></li>
+  <li><h3>Spacja i Page Down</h3><p>Przechodzą od jednego zatrzymanego kadru do następnego. Menu przenosi od razu do kursów, wyjazdów, zasad i kontaktu.</p></li>
+</ul>
+<section>
+  <header><h2><a href="../home-a/">A · Jedno zejście</a></h2><p>Jedna woda od początku do końca. W dół idą emocje, w górę informacje, a formularz czeka na powierzchni. Strona kończy się tam, gdzie się zaczęła.</p><p class="m">29.1 ekranów przewijania</p></header>
+  <div class="g"><div class="ax"><em style="left:0.00%">0</em><em style="left:17.16%">5</em><em style="left:34.33%">10</em><em style="left:51.49%">15</em><em style="left:68.66%">20</em><em style="left:85.82%">25</em></div>
+<div class="r"><span class="l">Tętno zwalnia i już teraz</span><span class="t"><i style="left:9.50%;width:9.21%;background:linear-gradient(90deg,transparent 0,var(--ink) 4.0%,var(--ink) 93.5%,transparent 100%)"></i></span><span class="n">2.8–5.4</span></div>
+<div class="r"><span class="l">Myśli się porządkują, a Ty</span><span class="t"><i style="left:21.03%;width:9.78%;background:linear-gradient(90deg,transparent 0,var(--ink) 6.1%,var(--ink) 93.9%,transparent 100%)"></i></span><span class="n">6.1–9.0</span></div>
+<div class="r"><span class="l">Ciało pamięta odruch, z którym</span><span class="t"><i style="left:31.67%;width:5.41%;background:linear-gradient(90deg,transparent 0,var(--ink) 11.1%,var(--ink) 88.9%,transparent 100%)"></i></span><span class="n">9.2–10.8</span></div>
+<div class="r"><span class="l">Teraz zawracasz, od teraz znasz</span><span class="t"><i style="left:38.45%;width:13.73%;background:linear-gradient(90deg,transparent 0,var(--ink) 4.4%,var(--ink) 91.3%,transparent 100%)"></i></span><span class="n">11.2–15.2</span></div>
+<div class="r"><span class="l">Na górze czeka twój partner.</span><span class="t"><i style="left:53.21%;width:4.63%;background:linear-gradient(90deg,transparent 0,var(--ink) 22.2%,var(--ink) 77.8%,transparent 100%)"></i></span><span class="n">15.5–16.9</span></div>
+<div class="r"><span class="l">Trzy kroki w dół</span><span class="t"><i style="left:58.53%;width:12.36%;background:linear-gradient(90deg,transparent 0,var(--ink) 8.3%,var(--ink) 91.7%,transparent 100%)"></i></span><span class="n">17.1–20.6</span></div>
+<div class="r"><span class="l">Wyjazdy</span><span class="t"><i style="left:71.23%;width:11.33%;background:linear-gradient(90deg,transparent 0,var(--ink) 9.1%,var(--ink) 90.9%,transparent 100%)"></i></span><span class="n">20.8–24.1</span></div>
+<div class="r"><span class="l">Zasady</span><span class="t"><i style="left:82.90%;width:10.47%;background:linear-gradient(90deg,transparent 0,var(--ink) 9.8%,var(--ink) 90.2%,transparent 100%)"></i></span><span class="n">24.1–27.2</span></div>
+<div class="r"><span class="l">Kontakt · zwykłe przewijanie</span><span class="t"><i style="left:97.84%;width:2.16%;background:linear-gradient(90deg,transparent 0,var(--ink) 47.6%,var(--ink) 100.0%,transparent 100%)"></i></span><span class="n">28.5–29.1</span></div>
+  </div>
+  <div class="f"><figure><img src="media/plan-a-0.jpg" alt="" loading="lazy"><figcaption>0</figcaption></figure><figure><img src="media/plan-a-1.jpg" alt="" loading="lazy"><figcaption>7.2</figcaption></figure><figure><img src="media/plan-a-2.jpg" alt="" loading="lazy"><figcaption>13.6</figcaption></figure><figure><img src="media/plan-a-3.jpg" alt="" loading="lazy"><figcaption>16.1</figcaption></figure><figure><img src="media/plan-a-4.jpg" alt="" loading="lazy"><figcaption>19.2</figcaption></figure><figure><img src="media/plan-a-5.jpg" alt="" loading="lazy"><figcaption>21.4</figcaption></figure><figure><img src="media/plan-a-6.jpg" alt="" loading="lazy"><figcaption>25.5</figcaption></figure><figure><img src="media/plan-a-7.jpg" alt="" loading="lazy"><figcaption>28</figcaption></figure></div>
+</section><section>
+  <header><h2><a href="../home-b/">B · Film</a></h2><p>Prawdziwe nagranie w pełnym kadrze, bez wycinania postaci. Film kurczy się do pionowej planszy, która towarzyszy czytaniu, a na końcu ciemność przechodzi w światło i papier.</p><p class="m">24.3 ekranów przewijania</p></header>
+  <div class="g"><div class="ax"><em style="left:0.00%">0</em><em style="left:20.55%">5</em><em style="left:41.11%">10</em><em style="left:61.66%">15</em><em style="left:82.21%">20</em></div>
+<div class="r"><span class="l">Pod wodą nie ma powiadomień.</span><span class="t"><i style="left:4.11%;width:8.02%;background:linear-gradient(90deg,transparent 0,var(--ink) 17.9%,var(--ink) 82.1%,transparent 100%)"></i></span><span class="n">1.0–3.0</span></div>
+<div class="r"><span class="l">Tętno zwalnia i już teraz</span><span class="t"><i style="left:13.36%;width:8.02%;background:linear-gradient(90deg,transparent 0,var(--ink) 17.9%,var(--ink) 82.1%,transparent 100%)"></i></span><span class="n">3.2–5.2</span></div>
+<div class="r"><span class="l">Myśli się porządkują, a Ty</span><span class="t"><i style="left:22.61%;width:8.02%;background:linear-gradient(90deg,transparent 0,var(--ink) 17.9%,var(--ink) 82.1%,transparent 100%)"></i></span><span class="n">5.5–7.5</span></div>
+<div class="r"><span class="l">Ciało pamięta odruch, z którym</span><span class="t"><i style="left:31.86%;width:8.02%;background:linear-gradient(90deg,transparent 0,var(--ink) 17.9%,var(--ink) 82.1%,transparent 100%)"></i></span><span class="n">7.8–9.7</span></div>
+<div class="r"><span class="l">Teraz zawracasz, od teraz znasz</span><span class="t"><i style="left:49.94%;width:9.04%;background:linear-gradient(90deg,transparent 0,var(--ink) 15.9%,var(--ink) 84.1%,transparent 100%)"></i></span><span class="n">12.2–14.3</span></div>
+<div class="r"><span class="l">Kursy · zwykłe przewijanie</span><span class="t"><i style="left:59.19%;width:14.79%;background:linear-gradient(90deg,transparent 0,var(--ink) 8.3%,var(--ink) 91.7%,transparent 100%)"></i></span><span class="n">14.4–18.0</span></div>
+<div class="r"><span class="l">Wyjazdy · zwykłe przewijanie</span><span class="t"><i style="left:69.87%;width:14.82%;background:linear-gradient(90deg,transparent 0,var(--ink) 8.3%,var(--ink) 91.7%,transparent 100%)"></i></span><span class="n">17.0–20.6</span></div>
+<div class="r"><span class="l">Zasady · zwykłe przewijanie</span><span class="t"><i style="left:80.58%;width:8.77%;background:linear-gradient(90deg,transparent 0,var(--ink) 14.1%,var(--ink) 85.9%,transparent 100%)"></i></span><span class="n">19.6–21.7</span></div>
+<div class="r"><span class="l">Kontakt · zwykłe przewijanie</span><span class="t"><i style="left:95.93%;width:4.07%;background:linear-gradient(90deg,transparent 0,var(--ink) 30.3%,var(--ink) 100.0%,transparent 100%)"></i></span><span class="n">23.3–24.3</span></div>
+  </div>
+  <div class="f"><figure><img src="media/plan-b-0.jpg" alt="" loading="lazy"><figcaption>0</figcaption></figure><figure><img src="media/plan-b-1.jpg" alt="" loading="lazy"><figcaption>2.1</figcaption></figure><figure><img src="media/plan-b-2.jpg" alt="" loading="lazy"><figcaption>6.5</figcaption></figure><figure><img src="media/plan-b-3.jpg" alt="" loading="lazy"><figcaption>11.7</figcaption></figure><figure><img src="media/plan-b-4.jpg" alt="" loading="lazy"><figcaption>13.2</figcaption></figure><figure><img src="media/plan-b-5.jpg" alt="" loading="lazy"><figcaption>16.6</figcaption></figure><figure><img src="media/plan-b-6.jpg" alt="" loading="lazy"><figcaption>19</figcaption></figure><figure><img src="media/plan-b-7.jpg" alt="" loading="lazy"><figcaption>22.2</figcaption></figure></div>
+</section><section>
+  <header><h2><a href="../home-c/">C · Typografia</a></h2><p>Papier i tusz. Litery rozchodzą się, a O rośnie do pełnego ekranu. Potem manifest czytany słowo po słowie, schody kursów, nazwy wyjazdów zapalane po kolei.</p><p class="m">19.4 ekranów przewijania</p></header>
+  <div class="g"><div class="ax"><em style="left:0.00%">0</em><em style="left:25.84%">5</em><em style="left:51.68%">10</em><em style="left:77.52%">15</em></div>
+<div class="r"><span class="l">Tętno zwalnia i już teraz</span><span class="t"><i style="left:10.08%;width:8.53%;background:linear-gradient(90deg,transparent 0,var(--ink) 21.2%,var(--ink) 78.8%,transparent 100%)"></i></span><span class="n">1.9–3.6</span></div>
+<div class="r"><span class="l">Myśli się porządkują, a Ty</span><span class="t"><i style="left:20.16%;width:8.53%;background:linear-gradient(90deg,transparent 0,var(--ink) 21.2%,var(--ink) 78.8%,transparent 100%)"></i></span><span class="n">3.9–5.5</span></div>
+<div class="r"><span class="l">Ciało pamięta odruch, z którym</span><span class="t"><i style="left:30.23%;width:8.53%;background:linear-gradient(90deg,transparent 0,var(--ink) 21.2%,var(--ink) 78.8%,transparent 100%)"></i></span><span class="n">5.8–7.5</span></div>
+<div class="r"><span class="l">Teraz zawracasz, od teraz znasz</span><span class="t"><i style="left:40.05%;width:5.43%;background:linear-gradient(90deg,transparent 0,var(--ink) 23.8%,var(--ink) 81.0%,transparent 100%)"></i></span><span class="n">7.8–8.8</span></div>
+<div class="r"><span class="l">Kursy · zwykłe przewijanie</span><span class="t"><i style="left:61.76%;width:14.13%;background:linear-gradient(90deg,transparent 0,var(--ink) 11.0%,var(--ink) 89.0%,transparent 100%)"></i></span><span class="n">11.9–14.7</span></div>
+<div class="r"><span class="l">Wyjazdy · zwykłe przewijanie</span><span class="t"><i style="left:70.72%;width:22.74%;background:linear-gradient(90deg,transparent 0,var(--ink) 6.8%,var(--ink) 93.2%,transparent 100%)"></i></span><span class="n">13.7–18.1</span></div>
+<div class="r"><span class="l">Zasady · zwykłe przewijanie</span><span class="t"><i style="left:88.29%;width:11.71%;background:linear-gradient(90deg,transparent 0,var(--ink) 13.2%,var(--ink) 86.8%,transparent 100%)"></i></span><span class="n">17.1–19.3</span></div>
+<div class="r"><span class="l">Kontakt · zwykłe przewijanie</span><span class="t"><i style="left:94.83%;width:5.17%;background:linear-gradient(90deg,transparent 0,var(--ink) 30.0%,var(--ink) 100.0%,transparent 100%)"></i></span><span class="n">18.4–19.4</span></div>
+  </div>
+  <div class="f"><figure><img src="media/plan-c-0.jpg" alt="" loading="lazy"><figcaption>0</figcaption></figure><figure><img src="media/plan-c-1.jpg" alt="" loading="lazy"><figcaption>0.55</figcaption></figure><figure><img src="media/plan-c-2.jpg" alt="" loading="lazy"><figcaption>1.2</figcaption></figure><figure><img src="media/plan-c-3.jpg" alt="" loading="lazy"><figcaption>4.7</figcaption></figure><figure><img src="media/plan-c-4.jpg" alt="" loading="lazy"><figcaption>11</figcaption></figure><figure><img src="media/plan-c-5.jpg" alt="" loading="lazy"><figcaption>13.2</figcaption></figure><figure><img src="media/plan-c-6.jpg" alt="" loading="lazy"><figcaption>15.5</figcaption></figure><figure><img src="media/plan-c-7.jpg" alt="" loading="lazy"><figcaption>18.2</figcaption></figure></div>
+</section>
+</body>
+</html>

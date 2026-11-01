@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · szkoła freedivingu, Gdynia</title>
+<meta name="description" content="Uczymy oddychać, zanim nauczymy nurkować. Kursy freedivingu w Gdyni i wyjazdy na głęboką wodę.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="../fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/archivo-var-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';src:url(../fonts/archivo-var-latin-ext.woff2) format('woff2');font-weight:100 900;font-stretch:62% 125%;font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* Version B, the film. One typeface at light weights; the hierarchy comes from size and from how much air each level gets.
+   display 13.6vw, statement 60, title 76, body 18, meta 14; 8 px spacing grid, sections 22vh apart */
+:root{--ink:#0B0C0D;--fg:#EEF1F0;--paper:#E9ECEA;--g:clamp(20px,3.9vw,56px);--plate-w:calc(74svh*.5625)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink)}
+body{font-family:Archivo,sans-serif;font-weight:360;color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.meta{font-size:14px;line-height:1.4;font-variant-numeric:tabular-nums;font-weight:420}
+.say,h2,h3,.title{font-weight:340;letter-spacing:-.035em}
+
+/* the film stays behind everything until the plate has left */
+.stage{position:fixed;inset:0;height:100svh;overflow:hidden;z-index:0;background:#000}
+.frame{position:absolute;inset:0;will-change:clip-path}
+.film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 50%;transform-origin:0 0;opacity:0;will-change:transform}
+.scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(6,8,9,.5) 0,rgba(6,8,9,0) 22%,rgba(6,8,9,0) 46%,rgba(6,8,9,.66) 100%),linear-gradient(90deg,rgba(6,8,9,.34) 0,rgba(6,8,9,0) 46%)}
+.p{position:absolute;object-fit:cover;opacity:0;background:#000}
+
+/* what sits on the film */
+.over{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hero-title{position:absolute;left:var(--g);right:var(--g);bottom:calc(var(--g)*.72);overflow:hidden;padding-top:.08em}
+.title{display:block;font-size:13.6vw;line-height:.94;letter-spacing:-.052em;white-space:nowrap;will-change:transform;margin-left:-.045em}
+.lead{position:absolute;left:var(--g);font-size:clamp(18px,1.7vw,24px);line-height:1.28;letter-spacing:-.012em;font-weight:380}
+.say{position:absolute;left:var(--g);bottom:var(--g);width:min(36vw,560px);font-size:clamp(30px,3.9vw,60px);line-height:1.06;visibility:hidden;will-change:transform,opacity,filter}
+
+/* fixed chrome */
+.nav{position:fixed;left:var(--g);right:var(--g);top:calc(var(--g)*.62);z-index:30;display:flex;justify-content:space-between;align-items:flex-start;font-size:15px;line-height:1.35;font-weight:480;transition:color .5s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.nav .sub{display:block;font-weight:400;opacity:.66}
+.meter{position:fixed;right:var(--g);bottom:var(--g);z-index:29;text-align:right;line-height:1;transition:color .5s;will-change:transform}
+.meter small{display:block;font-size:12px;opacity:.7;margin-bottom:6px}
+.meter b{display:block;font-size:clamp(30px,3.1vw,44px);font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+html.on-paper .nav,html.on-paper .meter{color:var(--ink)}
+
+.gate{position:fixed;left:0;right:0;z-index:20;pointer-events:none;opacity:0}
+.gate.t{top:0;height:max(13svh,150px);background:linear-gradient(180deg,var(--ink) 62%,rgba(11,12,13,0))}
+.gate.b{bottom:0;height:15svh;background:linear-gradient(0deg,var(--ink) 58%,rgba(11,12,13,0))}
+.menu{position:fixed;inset:0;z-index:28;background:#050606;color:var(--fg);visibility:hidden;clip-path:inset(0 0 100% 0);display:flex;flex-direction:column;justify-content:flex-end;padding:var(--g)}
+.menu a{display:block;overflow:hidden;font-size:min(8.2vw,13.4svh);line-height:1.04;font-weight:340;letter-spacing:-.04em}
+.menu a span{display:block;transition:opacity .3s}
+.menu nav:hover a span{opacity:.34}.menu nav a:hover span{opacity:1}
+.menu .meta{margin-top:40px;opacity:.7}
+html.menu-open .nav{color:var(--fg);transform:none!important}
+html.menu-open .meter{visibility:hidden}
+
+/* the sections: text in the left seven columns, the plate holds the right */
+main{position:relative;z-index:1}
+.spacer{height:1540svh}
+.info{padding:22vh var(--g) 4vh;min-height:100svh}
+.col{width:calc(100% - var(--plate-w) - 8vw)}
+h2{font-size:clamp(44px,6.4vw,100px);line-height:1;letter-spacing:-.042em}
+.intro{font-size:clamp(17px,1.35vw,20px);line-height:1.5;max-width:30em;opacity:.74;margin-top:28px}
+.row{min-height:66vh;display:flex;flex-direction:column;justify-content:center;border-top:1px solid rgba(238,241,240,.16);padding:40px 0;transition:opacity .7s cubic-bezier(.2,.7,.2,1);opacity:.28}
+.row.on{opacity:1}
+.rows{margin-top:16vh}
+h3{font-size:clamp(36px,5vw,76px);line-height:1.02;letter-spacing:-.04em}
+.row p{font-size:clamp(16px,1.25vw,19px);line-height:1.5;max-width:31em;margin-top:20px;opacity:.76}
+.row dl{display:flex;flex-wrap:wrap;gap:8px 40px;margin-top:28px}
+.row dt{opacity:.56}
+.go{display:inline-block;margin-top:28px;font-size:15px;font-weight:480;border-bottom:1px solid currentColor;padding-bottom:3px;align-self:flex-start;transition:opacity .25s}
+.go:hover{opacity:.56}
+
+.rules{padding:30vh var(--g) 26vh;background:var(--ink);position:relative}
+.rules h2{max-width:11em}
+.rules ol{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;margin-top:18vh}
+.rules li{border-top:1px solid rgba(238,241,240,.2);padding-top:18px}
+.rules h4{font-size:clamp(20px,1.75vw,26px);font-weight:400;line-height:1.14;letter-spacing:-.018em;margin-top:44px}
+.rules li p{font-size:15px;line-height:1.5;opacity:.72;margin-top:14px;max-width:24em}
+
+/* the way up: light grows until the page is paper */
+.up{height:260svh;position:relative;background:var(--ink)}
+.up .pin{position:sticky;top:0;height:100svh;overflow:hidden}
+.up video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform,opacity}
+.up .white{position:absolute;inset:0;background:var(--paper);opacity:0}
+
+.end{position:relative;background:var(--paper);color:var(--ink);padding:14vh var(--g) 0}
+.end .top{display:grid;grid-template-columns:7fr 5fr;gap:6vw;align-items:start}
+.end h2{font-size:clamp(52px,8.4vw,132px);line-height:.98}
+.end .intro{opacity:.76}
+.end .mail{display:inline-block;font-size:clamp(20px,2vw,30px);letter-spacing:-.02em;font-weight:400;margin-top:28px;border-bottom:1px solid currentColor;padding-bottom:3px}
+form{display:grid;gap:26px;padding-top:12px}
+label{display:block;font-size:13px;font-weight:460}
+input,select{display:block;width:100%;font:inherit;font-size:19px;font-weight:380;color:inherit;background:none;border:0;border-bottom:1px solid rgba(11,12,13,.3);padding:10px 0 12px;outline:0;border-radius:0;transition:border-color .25s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--ink)}
+form button{justify-self:start;font-size:16px;font-weight:480;background:var(--ink);color:var(--paper);padding:15px 26px;border-radius:999px;margin-top:8px;transition:opacity .25s}
+form button:hover{opacity:.78}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 40px;margin-top:12vh;padding-bottom:28px}
+.foot a:hover{opacity:.56}
+.wordmark{overflow:hidden;margin:0 calc(var(--g)*-1);padding:0 var(--g)}
+.wordmark span{display:block;font-size:13.6vw;line-height:.94;letter-spacing:-.052em;font-weight:340;white-space:nowrap;margin:0 0 -.03em -.045em}
+
+@media (max-width:760px){
+  .title,.wordmark span{font-size:19.6vw;white-space:normal;line-height:.9}
+  .say{width:auto;right:var(--g);bottom:calc(var(--g) + 66px);font-size:32px}
+  .film{object-position:72% 50%}
+  .col{width:100%}
+  .rows{margin-top:10vh}
+  .row{min-height:0;padding:40px 0 48px}.row{opacity:1}
+  .rules ol{grid-template-columns:1fr 1fr;gap:32px 20px;margin-top:10vh}
+  .rules h4{margin-top:24px}
+  .end .top{grid-template-columns:1fr;gap:56px}
+  .info{padding-top:16vh}
+}
+</style>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+<script src="../lib/home-core-1.js" defer></script>
+</head>
+<body>
+
+<div class="stage">
+  <div class="frame">
+    <video class="film" muted playsinline preload="auto" aria-hidden="true"></video>
+    <div class="scrim"></div>
+    <video class="p" data-k="d" muted playsinline aria-hidden="true"></video>
+    <video class="p" data-k="b" muted playsinline aria-hidden="true"></video>
+    <video class="p" data-k="c" muted playsinline aria-hidden="true"></video>
+  </div>
+  <div class="over">
+    <p class="lead">Uczymy oddychać,<br>zanim nauczymy nurkować.</p>
+    <h1 class="hero-title" aria-label="Slow Descent"><span class="title">Slow Descent</span></h1>
+    <p class="say" id="s1">Pod wodą nie ma powiadomień. Jest tylko następny metr.</p>
+    <p class="say" id="s2">Tętno zwalnia i&nbsp;już teraz nie musisz nic robić.</p>
+    <p class="say" id="s3">Myśli się porządkują, a&nbsp;Ty przestajesz płynąć.</p>
+    <p class="say" id="s4">Ciało pamięta odruch, z&nbsp;którym się urodziłeś.</p>
+    <p class="say" id="s5">Teraz zawracasz, od teraz znasz siebie jeszcze lepiej.</p>
+  </div>
+</div>
+
+<header class="nav">
+  <p><a href="#" data-go="0">Slow Descent®</a><span class="sub">Szkoła freedivingu, Gdynia</span></p>
+  <button data-menu aria-label="Menu">Menu</button>
+</header>
+<div class="gate t"></div><div class="gate b"></div>
+<p class="meter" aria-hidden="true"><small>głębokość</small><b>0,0 m</b></p>
+
+<div class="menu" aria-hidden="true">
+  <nav>
+    <a href="#" data-go="1.8"><span>Zejście</span></a>
+    <a href="#kursy" data-go="#kursy"><span>Kursy</span></a>
+    <a href="#wyjazdy" data-go="#wyjazdy"><span>Wyjazdy</span></a>
+    <a href="#zasady" data-go="#zasady"><span>Zasady</span></a>
+    <a href="#kontakt" data-go="#kontakt"><span>Kontakt</span></a>
+  </nav>
+  <p class="meta">hej@slowdescent.pl</p>
+</div>
+
+<main>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <section class="info" id="kursy">
+    <div class="col">
+      <h2 data-rv="lines">Trzy kroki w&nbsp;dół.</h2>
+      <p class="intro" data-rv>Każdy kurs zaczyna się na sucho: od oddechu, rozciągania przepony i&nbsp;rozmowy o&nbsp;strachu. Dopiero potem woda.</p>
+      <div class="rows">
+        <article class="row"><h3>Pierwszy oddech</h3><p>Statyka, oddech przeponowy i&nbsp;pierwsze 25 metrów pod wodą. Wychodzisz z&nbsp;basenu zaskoczony, ile naprawdę wytrzymujesz.</p><dl class="meta"><div><dt>Gdzie</dt><dd>Basen, Gdynia</dd></div><div><dt>Ile</dt><dd>1 dzień</dd></div><div><dt>Kiedy</dt><dd>Co sobotę</dd></div><div><dt>Cena</dt><dd>290 zł</dd></div></dl></article>
+        <article class="row"><h3>Do 20 metrów</h3><p>Wyrównywanie ciśnienia, praca z&nbsp;liną i&nbsp;asekuracja partnera. Kończysz z&nbsp;certyfikatem i&nbsp;spokojem na dwudziestym metrze.</p><dl class="meta"><div><dt>Gdzie</dt><dd>Jezioro</dd></div><div><dt>Ile</dt><dd>4 dni</dd></div><div><dt>Kiedy</dt><dd>Maj–wrzesień</dd></div><div><dt>Cena</dt><dd>1 450 zł</dd></div></dl></article>
+        <article class="row"><h3>Głębia</h3><p>Zejścia na 30–40 metrów i&nbsp;trening pod termokliną. Dla tych, którzy chcą zrozumieć, dlaczego to wciąga.</p><dl class="meta"><div><dt>Gdzie</dt><dd>Morze</dd></div><div><dt>Ile</dt><dd>6 dni</dd></div><div><dt>Kiedy</dt><dd>Luty, maj</dd></div><div><dt>Cena</dt><dd>3 200 zł</dd></div></dl><a class="go" href="#kontakt" data-go="#kontakt">Zapisz się na kurs</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="info" id="wyjazdy">
+    <div class="col">
+      <h2 data-rv="lines">Dokąd schodzimy w&nbsp;2027.</h2>
+      <div class="rows">
+        <article class="row"><h3>Dahab</h3><p>Egipt. Blue Hole i&nbsp;laguna. Najspokojniejsza głębia, jaką znamy.</p><dl class="meta"><div><dt>Termin</dt><dd>14–23.02</dd></div><div><dt>Głębokość</dt><dd>do 40 m</dd></div><div><dt>Cena</dt><dd>od 6 900 zł</dd></div></dl></article>
+        <article class="row"><h3>Gozo</h3><p>Malta. Jaskinie, przejrzysta woda i&nbsp;22°C już w&nbsp;maju.</p><dl class="meta"><div><dt>Termin</dt><dd>08–16.05</dd></div><div><dt>Głębokość</dt><dd>do 30 m</dd></div><div><dt>Cena</dt><dd>od 5 400 zł</dd></div></dl></article>
+        <article class="row"><h3>Hańcza</h3><p>Polska. Najgłębsze jezioro w&nbsp;kraju. Zimno, ciemno i&nbsp;pięknie.</p><dl class="meta"><div><dt>Termin</dt><dd>11–14.09</dd></div><div><dt>Głębokość</dt><dd>do 25 m</dd></div><div><dt>Cena</dt><dd>1 450 zł</dd></div></dl><a class="go" href="#kontakt" data-go="#kontakt">Zapytaj o miejsce</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="rules" id="zasady">
+    <h2 data-rv="lines">Głębokość to skutek. Zasady są stałe.</h2>
+    <ol>
+      <li data-rv><span class="meta">01</span><h4>Nigdy sam</h4><p>Każde zejście ma partnera na powierzchni, który patrzy tylko na ciebie. Także na basenie.</p></li>
+      <li data-rv><span class="meta">02</span><h4>Oddech przed głębią</h4><p>Zanim zejdziesz na dziesięć metrów, nauczysz się trzech minut spokojnej statyki.</p></li>
+      <li data-rv><span class="meta">03</span><h4>Lina, boja, przeciwwaga</h4><p>Na wodach otwartych trenujemy zawsze przy linie. Nikt nie zgubi kierunku.</p></li>
+      <li data-rv><span class="meta">04</span><h4>Mała grupa</h4><p>Czterech kursantów na instruktora. Nikt nie czeka w&nbsp;kolejce i&nbsp;nikt się nie spieszy.</p></li>
+    </ol>
+  </section>
+
+  <section class="up" aria-hidden="true"><div class="pin"><video muted playsinline loop preload="none"></video><div class="white"></div></div></section>
+
+  <section class="end" id="kontakt">
+    <div class="top">
+      <div>
+        <h2 data-rv="lines">Weź wdech. Napisz do nas.</h2>
+        <p class="intro" data-rv>Odpowiadamy w&nbsp;ciągu doby. Jeśli boisz się wody, napisz o&nbsp;tym wprost. To bardzo dobry początek.</p>
+        <a class="mail" data-rv href="mailto:hej@slowdescent.pl">hej@slowdescent.pl</a>
+      </div>
+      <form data-rv>
+        <label>Imię<input name="imie" autocomplete="given-name" required></label>
+        <label>E-mail<input name="mail" type="email" autocomplete="email" required></label>
+        <label>Na jakim etapie jesteś?<input name="etap" placeholder=""></label>
+        <button type="submit">Wyślij</button>
+      </form>
+    </div>
+    <div class="foot meta"><span>Gdynia, Bulwar Nadmorski</span><span>pon.–pt. 9:00–17:00</span><a href="#">Instagram</a><a href="#">YouTube</a><a href="#" data-go="0">Do góry</a></div>
+    <div class="wordmark" aria-hidden="true"><span>Slow Descent</span></div>
+  </section>
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const { c01, lerp, ss, reduce, beat, onFrame, scrub, load, q } = Home;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const frame = $('.frame'), film = $('.film'), scrim = $('.scrim'), title = $('.title'), lead = $('.lead'), meterEl = $('.meter'), meterB = $('.meter b');
+  const P = Object.fromEntries($$('.p').map(v => [v.dataset.k, v]));
+  const heroT = $('.hero-title'), stage = $('.stage');
+
+  // where the woman is in the film: [second, x0, y0, x1, y1], see tools/subject_track.py
+  const TRACK = [[0.0,0.562,0.003,0.695,0.61],[0.5,0.557,0.003,0.757,0.573],[1.0,0.541,0.003,0.776,0.476],[1.5,0.521,0.003,0.769,0.446],[2.0,0.503,0.003,0.745,0.457],[2.5,0.494,0.003,0.768,0.46],[3.0,0.491,0.004,0.787,0.468],[3.5,0.488,0.003,0.812,0.486],[4.0,0.495,0.004,0.833,0.504],[4.5,0.498,0.006,0.894,0.525],[5.0,0.5,0.006,0.985,0.551],[5.5,0.502,0.018,0.994,0.576],[6.0,0.511,0.013,0.991,0.596],[6.5,0.513,0.007,0.994,0.611],[7.0,0.512,0.01,0.995,0.624],[7.5,0.514,0.09,0.995,0.632],[8.0,0.512,0.099,0.997,0.632],[8.5,0.509,0.071,0.995,0.625],[9.0,0.505,0.074,0.995,0.625],[9.5,0.502,0.221,0.993,0.622],[10.0,0.5,0.307,0.996,0.617],[10.5,0.497,0.243,0.995,0.613],[11.0,0.491,0.149,0.996,0.604],[11.5,0.49,0.113,0.996,0.603],[12.0,0.492,0.151,0.997,0.607],[12.5,0.494,0.212,0.995,0.61],[13.0,0.496,0.126,0.995,0.604],[13.5,0.492,0.196,0.995,0.613],[14.0,0.497,0.094,0.995,0.617],[14.5,0.501,0.144,0.995,0.622],[15.0,0.505,0.19,0.997,0.632],[15.5,0.506,0.215,0.997,0.647],[16.0,0.509,0.169,0.996,0.658],[16.5,0.518,0.135,0.998,0.665],[17.0,0.52,0.119,0.998,0.674],[17.5,0.527,0.156,0.996,0.676],[18.0,0.529,0.2,0.998,0.685],[18.5,0.53,0.188,0.997,0.686],[19.0,0.534,0.149,0.997,0.681],[19.5,0.53,0.139,0.997,0.684],[20.0,0.524,0.221,0.998,0.686],[20.5,0.516,0.168,0.956,0.694],[21.0,0.512,0.129,0.966,0.7],[21.5,0.513,0.1,0.987,0.7],[22.0,0.513,0.071,0.964,0.701],[22.5,0.517,0.082,0.937,0.728],[23.0,0.52,0.124,0.926,0.758],[23.5,0.523,0.136,0.935,0.772],[24.0,0.524,0.135,0.935,0.768],[24.5,0.52,0.118,0.914,0.774],[25.0,0.518,0.128,0.87,0.771],[25.5,0.51,0.151,0.885,0.757],[26.0,0.506,0.107,0.942,0.749],[26.5,0.498,0.093,0.958,0.751],[27.0,0.485,0.135,0.951,0.753],[27.5,0.47,0.256,0.887,0.757],[28.0,0.461,0.243,0.848,0.765],[28.5,0.448,0.244,0.807,0.769],[29.0,0.432,0.281,0.762,0.76],[29.5,0.416,0.367,0.755,0.756],[30.0,0.401,0.343,0.769,0.764],[30.5,0.388,0.328,0.767,0.774],[31.0,0.379,0.35,0.735,0.776],[31.5,0.373,0.392,0.702,0.772],[32.0,0.373,0.415,0.689,0.762],[32.5,0.379,0.393,0.684,0.749],[33.0,0.383,0.375,0.69,0.732],[33.5,0.391,0.34,0.71,0.713],[34.0,0.398,0.317,0.72,0.692],[34.5,0.403,0.318,0.72,0.695]];
+
+  const CLIPS = [{ v: film, src: 'film-mono.mp4' }, { v: P.d, src: 'plate-d.mp4' }, { v: P.b, src: 'plate-b.mp4' }, { v: P.c, src: 'plate-c.mp4' }];
+
+  await Home.init({ resize: layout });
+  await document.fonts.ready;
+
+  // --- the score, in screens of scroll ---
+  const FILM_END = 11.2, SHRINK = [11.1, 12.2], T0 = 3, T1 = 34;
+  beat($('#s1'), [1.0, 1.35, 2.6, 2.95], { name: 's1' });
+  beat($('#s2'), [3.25, 3.6, 4.85, 5.2], { name: 's2' });
+  beat($('#s3'), [5.5, 5.85, 7.1, 7.45], { name: 's3' });
+  beat($('#s4'), [7.75, 8.1, 9.35, 9.7], { name: 's4' });
+  beat($('#s5'), [12.15, 12.5, 14.0, 14.35], { name: 's5' });
+  Home.extra.push([SHRINK[0], SHRINK[0] + .01, SHRINK[1] - .01, SHRINK[1]]);
+
+  // --- layout-dependent numbers ---
+  let W, H, mobile, plate, secs, heroH = 0, kursy, wyj, rules, up, end;
+  function layout() {
+    W = Home.W; H = Home.H; mobile = W <= 760;
+    const pw = H * .74 * .5625, ph = H * .74;
+    plate = mobile ? { x: 20, y: H * .1, w: W - 40, h: H * .5 } : { x: 0, y: H * .11, w: pw, h: ph };
+    if (mobile) { const g = parseFloat(getComputedStyle($('.nav')).left); plate.x = g; plate.w = W - 2 * g; }
+    const g = parseFloat(getComputedStyle($('.nav')).left); plate.x = mobile ? g : W - g - pw;
+    for (const v of Object.values(P)) Object.assign(v.style, { left: plate.x + 'px', top: plate.y + 'px', width: plate.w + 'px', height: plate.h + 'px' });
+    kursy = $('#kursy'); wyj = $('#wyjazdy'); rules = $('#zasady'); up = $('.up'); end = $('#kontakt');
+    // the name runs the full width of the page, here and at the end
+    for (const t of [title, $('.wordmark span')]) {
+      t.style.fontSize = '100px'; t.style.display = 'inline-block';
+      const tw = t.getBoundingClientRect().width, fs = (mobile ? W - 2 * g : W - 2 * g + 8) / tw * 100;
+      t.style.fontSize = (mobile ? Math.min(fs * 1.9, W * .23) : fs).toFixed(2) + 'px'; t.style.display = 'block';
+    }
+    heroH = heroT.offsetHeight;
+    lead.style.bottom = (parseFloat(getComputedStyle(heroT).bottom) + heroH + 18) + 'px';
+    secs = {
+      kursy: kursy.offsetTop, wyj: wyj.offsetTop, rules: rules.offsetTop, up: up.offsetTop, end: end.offsetTop,
+    };
+  }
+  layout();
+  const fontsDone = () => layout();
+  if (document.fonts.status !== 'loaded') document.fonts.ready.then(fontsDone);
+
+  // the frame around the moving pictures: full screen at first, the plate later
+  let cl = '';
+  function clipTo(x, y, w, h) {
+    const s = `inset(${y.toFixed(1)}px ${(W - x - w).toFixed(1)}px ${(H - y - h).toFixed(1)}px ${x.toFixed(1)}px)`;
+    if (s !== cl) { frame.style.clipPath = s; cl = s; }
+  }
+
+  // --- the first seconds: she arrives from the surface while the title rises, nothing waits for a click ---
+  const intro = { t: 0.3, a: reduce ? 1 : 0 };
+  const introRun = () => {
+    gsap.to(intro, { t: T0, duration: reduce ? 0 : 4.6, ease: 'sine.out' });
+    gsap.to(intro, { a: 1, duration: 2, ease: 'power2.out' });
+  };
+  if (!reduce) {
+    gsap.fromTo(title, { yPercent: 104 }, { yPercent: 0, duration: 1.7, ease: 'expo.out', delay: .25, overwrite: false });
+    gsap.fromTo([lead, meterEl, $('.nav')], { opacity: 0 }, { opacity: 1, duration: 1.2, delay: 1, ease: 'power2.out' });
+  }
+  let introStarted = false, shownFilm = false;
+  film.addEventListener('loadeddata', () => { if (!introStarted) { introStarted = true; introRun(); } });
+  setTimeout(() => { if (!introStarted) { introStarted = true; introRun(); } }, 3000);
+  load(CLIPS, 'media/');
+
+  // --- rows: the one at the middle of the screen is lit ---
+  const rows = $$('.row');
+  function lightRows() {
+    const m = H * .5; let best = null, bd = 1e9;
+    for (const r of rows) { const b = r.getBoundingClientRect(), d = Math.abs((b.top + b.bottom) / 2 - m); if (d < bd && b.bottom > 0 && b.top < H) { bd = d; best = r; } }
+    for (const r of rows) r.classList.toggle('on', r === best);
+  }
+
+  // --- the meter ---
+  let lastMeter = '';
+  function setMeter(D) { const s = Math.max(0, D).toFixed(1).replace('.', ',') + ' m'; if (s !== lastMeter) { meterB.textContent = s; lastMeter = s; } }
+
+  const gates = $$('.gate');
+  const upV = $('.up video'), white = $('.up .white');
+  let upLoaded = false, lastUp = -1, navHidden = false, lastY = 0;
+  const navEl = $('.nav');
+
+  onFrame((h, y) => {
+    const scene = c01((h - SHRINK[0]) / (SHRINK[1] - SHRINK[0])), e = ss(scene);
+    // the film
+    const filmT = Math.min(T1, intro.t + Math.max(0, h) / FILM_END * (T1 - T0));
+    if (h < SHRINK[1] + .3) {
+      scrub(film, filmT);
+      if (!shownFilm && film.readyState >= 2) shownFilm = true;
+      const a = (shownFilm ? intro.a : 0);
+      film.style.opacity = a * (1 - ss((h - 12.1) / .35));
+    }
+    // she stays beside the text while the frame closes around her: the film moves so that she lands in the plate
+    const s = lerp(1, mobile ? .86 : .72, e);
+    const fx = .535, fy = .55;
+    const vw = W, vh = H;
+    const tx = lerp(0, plate.x + plate.w / 2 - fx * vw * s, e), ty = lerp(0, plate.y + plate.h / 2 - fy * vh * s, e);
+    if (scene > 0 && scene < 1 || h < SHRINK[1] + .3) film.style.transform = `translate3d(${tx.toFixed(1)}px,${ty.toFixed(1)}px,0) scale(${s.toFixed(4)})`;
+    scrim.style.opacity = 1 - e;
+    // natural sections on the plate; it leaves with the last of them
+    const leaveAt = mobile ? secs.kursy - H * .98 : secs.rules - H * .96, pushed = Math.max(0, y - leaveAt);
+    const stageGone = y > secs.rules + H * .1;
+    stage.style.visibility = stageGone ? 'hidden' : 'visible';
+    clipTo(lerp(0, plate.x, e), lerp(0, plate.y, e) - pushed, lerp(W, plate.w, e), lerp(H, plate.h, e));
+
+    // which picture the plate holds, each scrubbed over its stretch
+    const hK = secs.kursy / H, hW = secs.wyj / H, hR = secs.rules / H;
+    const dA = ss((h - 12.05) / .35) * (1 - ss((h - (hK - .55)) / .4));
+    const bA = ss((h - (hK - .5)) / .4) * (1 - ss((h - (hW - .25)) / .4));
+    const cA = ss((h - (hW - .3)) / .4);
+    const showOn = !mobile || h < hK - .1;
+    if (P.d.readyState >= 2) { P.d.style.opacity = dA; if (dA > 0) scrub(P.d, c01((h - 12.1) / 2.5) * Math.max(0, (P.d.duration || 8) - .1)); } else P.d.style.opacity = 0;
+    if (P.b.readyState >= 2) { P.b.style.opacity = showOn ? bA : 0; if (bA > 0 && showOn) scrub(P.b, c01((h - (hK - .5)) / (hW - hK + .3)) * Math.max(0, (P.b.duration || 8) - .1)); } else P.b.style.opacity = 0;
+    if (P.c.readyState >= 2) { P.c.style.opacity = showOn ? cA : 0; if (cA > 0 && showOn) scrub(P.c, c01((h - (hW - .3)) / (hR - hW + .1)) * Math.max(0, (P.c.duration || 6) - .1)); } else P.c.style.opacity = 0;
+
+    // hero: the title sinks below the edge, the lead softens, the meter comes down to its place
+    const out = ss((h - .05) / .7);
+    title.style.transform = out > 0 ? `translate3d(0,${(out * 104).toFixed(2)}%,0)` : title.style.transform;
+    const lo = 1 - ss((h - .02) / .4);
+    if (intro.a >= 1) { lead.style.opacity = lo; }
+    lead.style.filter = lo < 1 ? `blur(${((1 - lo) * 6).toFixed(1)}px)` : 'none';
+    lead.style.visibility = lo <= 0 ? 'hidden' : 'visible';
+    const mDrop = (1 - out) * (heroH + 18);
+    meterEl.style.transform = mDrop > .5 ? `translate3d(0,${-mDrop.toFixed(1)}px,0)` : 'none';
+
+    // depth: down with the film, up with the reading
+    let D;
+    if (h <= FILM_END) D = h / FILM_END * 40;
+    else if (y < secs.kursy) D = 40;
+    else D = lerp(40, 0, c01((y - secs.kursy) / (secs.up + H * 1.5 - secs.kursy)));
+    setMeter(D);
+
+    lightRows();
+    // the gate: from the plate onwards text comes and goes softly at the edges of the screen, clear of the bar and meter
+    const gateOn = ss((h - 14.2) / .2) * (1 - ss((y - (secs.up - H * .02)) / (H * .2)));
+    gates[0].style.opacity = gates[1].style.opacity = gateOn;
+
+    // the way up
+    const upP = c01((y - secs.up + H) / (H + up.offsetHeight - H));
+    if (upP > 0 && !upLoaded) { upLoaded = true; upV.src = 'media/' + 'surface-mono.mp4'; upV.play().catch(() => {}); }
+    if (upP !== lastUp) {
+      lastUp = upP;
+      const lit = ss((upP - .1) / .55);
+      upV.style.opacity = lit; upV.style.filter = `brightness(${lerp(.25, 1.25, lit).toFixed(3)})`;
+      upV.style.transform = `scale(${lerp(1.2, 1, upP).toFixed(4)})`;
+      white.style.opacity = ss((upP - .62) / .28);
+    }
+    // the bar goes dark as soon as paper is behind it
+    const pap = y + H * .04 >= secs.up + up.offsetHeight - H * .02 || white.style.opacity > .6 && upP > .6;
+    document.documentElement.classList.toggle('on-paper', !!pap);
+    if (intro.a >= 1) meterEl.style.opacity = 1 - ss((upP - .5) / .2);
+    // on the last section the bar steps aside while reading downwards, back when going up
+    const inEnd = y > secs.end - H * .6;
+    if (inEnd && y > lastY + .5 && !navHidden) { navHidden = true; navEl.style.transform = 'translateY(-140px)'; }
+    if ((y < lastY - .5 || !inEnd) && navHidden) { navHidden = false; navEl.style.transform = 'none'; }
+    lastY = y;
+  });
+
+  // for tools/home_check.py: what must stay clear of the text right now
+  window.__home.gate = () => +gates[0].style.opacity > .9 ? [Math.max(H * .1, 96), H * .88] : null;
+  window.__home.subject = () => {
+    const h = Home.lenis.scroll / H;
+    if (h < SHRINK[0]) {
+      const t = Math.min(T1, intro.t + h / FILM_END * (T1 - T0)), r = TRACK[Math.min(TRACK.length - 1, Math.round(t * 2))];
+      if (!r || !r[3]) return null;
+      const vw = 1600, vh = 900, sc = Math.max(W / vw, H / vh), dw = vw * sc, dh = vh * sc, ox = (W - dw) * (mobile ? .72 : .62), oy = (H - dh) * .5;
+      return { left: ox + r[1] * dw, top: oy + r[2] * dh, right: ox + r[3] * dw, bottom: oy + r[4] * dh, name: 'kobieta' };
+    }
+    if (h > SHRINK[1] && !(mobile && h > secs.kursy / H - .1)) {
+      const pushed = Math.max(0, Home.lenis.scroll - (mobile ? secs.kursy - H * .98 : secs.rules - H * .96));
+      return { left: plate.x, top: plate.y - pushed, right: plate.x + plate.w, bottom: plate.y + plate.h - pushed, name: 'plansza' };
+    }
+    return null;
+  };
+});
+</script>
+</body>
+</html>
