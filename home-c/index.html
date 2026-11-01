@@ -6,6 +6,7 @@
 <title>Slow Descent · szkoła freedivingu, Gdynia</title>
 <meta name="description" content="Uczymy oddychać, zanim nauczymy nurkować. Kursy freedivingu w Gdyni i wyjazdy na głęboką wodę.">
 <link rel="icon" href="data:,">
+<link rel="preload" href="media/poster-teal.jpg" as="image">
 <link rel="preload" href="../fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../fonts/archivo-var-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -29,7 +30,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .stage{position:fixed;inset:0;height:100svh;overflow:hidden;background:var(--paper);z-index:0}
 .film{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;will-change:transform;background:#06262E}
-.film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.film video,.film img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(2,18,22,.34) 0,rgba(2,18,22,0) 20%,rgba(2,18,22,0) 44%,rgba(2,18,22,.62) 100%);opacity:0}
 .sheet{position:absolute;inset:0;width:100%;height:100%;display:block}
 
@@ -151,7 +152,7 @@ form button:hover{opacity:.78}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="oclip" clipPathUnits="objectBoundingBox"><path id="oclipp"/></clipPath></defs></svg>
 
 <div class="stage">
-  <div class="film"></div>
+  <div class="film"><img src="media/poster-teal.jpg" alt=""></div>
   <div class="scrim"></div>
   <canvas class="sheet" aria-hidden="true"></canvas>
   <h1 class="title" aria-label="Slow Descent"><span class="ln" aria-hidden="true"><span class="l">S</span><span class="l">L</span><span class="l o">O</span><span class="l">W</span><i></i></span><span class="ln" aria-hidden="true"><span class="l">D</span><span class="l">E</span><span class="l">S</span><span class="l">C</span><span class="l">E</span><span class="l">N</span><span class="l">T</span><i></i></span></h1>
@@ -307,19 +308,21 @@ window.addEventListener('DOMContentLoaded', async () => {
     ctx.fill(oPath);
   }
 
+  const PART = [8.55, 8.5, 8.5, 8.5, 0.45];
+  const movie = Home.stack(film, [{ src: 'film-teal-0.mp4', t0: 0, dur: PART[0] }, { src: 'film-teal-1.mp4', t0: PART[0], dur: PART[1] }, { src: 'film-teal-2.mp4', t0: PART[0] + PART[1], dur: PART[2] }, { src: 'film-teal-3.mp4', t0: PART[0] + PART[1] + PART[2], dur: PART[3] }]);
+  load(movie.parts, 'media/', false);
+  window.__home.movie = movie;
   // --- first seconds: the letters rise, the O opens like a drop, she is already moving inside ---
-  const intro = { t: .9 };
+  const intro = { t: .9 }; let introT;
   if (!reduce) {
     gsap.fromTo(letters, { yPercent: 112 }, { yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: .03, delay: .1, onComplete: () => { root.classList.remove('intro'); gsap.set(letters, { clearProps: 'transform' }); introDone = true; } });
     gsap.to(oc, { z: 1, duration: 1.5, ease: 'expo.out', delay: .55 });
     gsap.fromTo([lead, meterEl, navEl], { opacity: 0 }, { opacity: 1, duration: 1.1, delay: 1.1, ease: 'power2.out' });
-    gsap.to(intro, { t: FILM_T[0], duration: 5.5, ease: 'sine.out', delay: .4 });
+    introT = gsap.to(intro, { t: FILM_T[0], duration: 5.5, ease: 'sine.out', delay: .4 });
+    // a slow line: the first frame stands in, and the film takes over from the same moment
+    setTimeout(() => { if (!movie.ready) { introT.kill(); intro.t = FILM_T[0]; } }, 1500);
   } else { root.classList.remove('intro'); intro.t = FILM_T[0]; }
   let introDone = reduce;
-  const PART = [8.583, 8.5, 8.5, 8.5];
-  const movie = Home.stack(film, [{ src: 'film-teal-0.mp4', t0: 0, dur: PART[0] }, { src: 'film-teal-1.mp4', t0: PART[0], dur: PART[1] }, { src: 'film-teal-2.mp4', t0: PART[0] + PART[1], dur: PART[2] }, { src: 'film-teal-3.mp4', t0: PART[0] + PART[1] + PART[2], dur: PART[3] }]);
-  load(movie.parts, 'media/');
-  window.__home.movie = movie;
 
   // --- manifesto words ---
   const mani = $('#mani');
