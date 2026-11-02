@@ -78,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
   beat($('#l4'), [8.7, 8.95, 9.25, 9.45], { name: 'l4', y: 8 });
   beat($('#l5'), [12.35, 12.6, 13.05, 13.3], { name: 'l5', y: 8 });
   const shade = $('.shade'), ls = ['#l2', '#l3', '#l4'].map($), lf = $('#l5'), nav = $('.nav');
-  FilmPage.start({ shots, total: END - 1, base, stayOn: true, readingFrom: END - .5,
+  FilmPage.start({ shots, total: END - .5, base, stayOn: true, readingFrom: END + .3,
     gate: () => document.documentElement.classList.contains('reading') ? [nav.offsetHeight + 2, Home.H + 1] : null,
     onFrame(h, y, now, film) {
       shade.style.opacity = Math.max(+$('#tt').style.opacity || 0, ...ls.map(l => +l.style.opacity || 0));
