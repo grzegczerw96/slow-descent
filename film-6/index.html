@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · szkoła freedivingu, Gdynia</title>
+<meta name="description" content="Kursy freedivingu w Gdyni dla początkujących i wyjazdy na głęboką wodę. Terminy, ceny, zapisy.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="media/f2-poster.jpg" as="image">
+<link rel="stylesheet" href="../lib/film-page-2.css">
+<style>
+/* VI. Kino. The wide frame between navy bars, words in the lower bar. The fin closes the frame and it opens onto the whole
+   screen in colour. Then the frame moves up and stays there as a screen; the section's name stands under it and the reading
+   scrolls in the room below. */
+.line{bottom:auto;top:0}
+.brandline{position:absolute;left:var(--g);right:var(--g);display:flex;justify-content:space-between;align-items:center;gap:32px;will-change:opacity}
+.brandline h1{font-weight:320;font-size:clamp(44px,6.4vw,100px);letter-spacing:-.045em;line-height:1}
+.brandline p{font-size:clamp(16px,1.4vw,21px);line-height:1.28;text-align:right;color:rgba(232,238,242,.86)}
+.stage.hall{clip-path:inset(0 0 var(--cut,0px) 0)}
+.stage{z-index:2}
+main{z-index:1}
+#room{position:relative;background:var(--navy)}
+.nav{background:none}
+.room section{min-height:0}
+
+</style>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+<script src="../lib/home-core-2.js" defer></script>
+<script src="../lib/info-2.js" defer></script>
+<script src="../lib/film-2.js" defer></script>
+<script src="../lib/film-tracks-1.js" defer></script>
+<script src="../lib/film-run-2.js" defer></script>
+</head>
+<body data-base="media/">
+<!-- src: 'f2-woman-0.mp4' src: 'f2-woman-1.mp4' src: 'f2-woman-2.mp4' src: 'f2-woman-3.mp4' src: 'f2-head.mp4' src: 'f2-fins.mp4' src: 'f2-pass.mp4' src: 'f2-flip.mp4' src: 'f2-glide.mp4' src: 'f2-up.mp4' src: 'col-entry.mp4' src: 'col-surface.mp4' src: 'col-reef.mp4' -->
+<div class="stage">
+  <canvas class="gl"></canvas>
+  <div class="strip" id="strip"><div class="tt"></div><a class="btn cta2" href="#zapis" data-go="#zapis" style="visibility:hidden">Zapisz się</a></div>
+  <div class="over">
+    <div class="brandline"><h1>Slow Descent</h1><p>Uczymy oddychać,<br>zanim nauczymy nurkować.</p></div>
+    <p class="line" id="l1">Od teraz jesteś tylko ty i&nbsp;twoje emocje.</p><p class="line" id="l2">Oddech się reguluje, myśli się porządkują.</p><p class="line" id="l3">Z&nbsp;każdym metrem masz w&nbsp;sobie więcej siły.</p><p class="line" id="l4">Teraz już wiesz: twoje emocje to nie ty.</p><p class="line" id="l5">Tego można się nauczyć.</p>
+  </div>
+</div>
+<header class="nav">
+  <p class="brand"><a href="#" data-go="0">Slow Descent</a><span class="sub">Szkoła freedivingu, Gdynia</span></p>
+  <div class="links"><a class="skip" href="#start" data-go="#start">Kursy i terminy</a><a class="more" href="#kursy" data-go="#kursy">Kursy</a><a class="more" href="#terminy" data-go="#terminy">Terminy</a><a class="more" href="#pytania" data-go="#pytania">Pytania</a><a class="more" href="#zasady" data-go="#zasady">Bezpieczeństwo</a></div>
+</header>
+
+<main><div class="spacer" aria-hidden="true"></div><div id="room" class="room"></div></main>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const base = document.body.dataset.base, { ss, c01, lerp, beat, reduce } = Home, { span, WOMAN, CLIP, track } = FilmPage, $ = s => document.querySelector(s);
+  const cut = .012;
+  // She is only ever seen whole and small in the frame, or as head and shoulders, or as fins: no close frames of the body.
+  const Shots = {
+    wide: (on, t, g, cam) => ({ name: 'kobieta', parts: WOMAN(), asp: 16 / 9, depth: true, poster: base + 'f2-poster.jpg', track: track('film'), on, t, g, cam }),
+    head: (on, t, g, cam) => ({ parts: CLIP('f2-head.mp4', 5), asp: 16 / 9, float: .8, on, t, g, cam }),
+    fins: (on, t, g, cam) => ({ parts: CLIP('f2-fins.mp4', 3.5), asp: 16 / 9, float: .8, on, t, g, cam }),
+    pass: (on, t, keep, cam) => ({ name: 'nurek', parts: CLIP('f2-pass.mp4', 9.1), asp: 9 / 16, keep: () => keep, g: () => .6, on, t, cam }),
+    flip: (on, t, keep, cam) => ({ name: 'przewrót', parts: CLIP('f2-flip.mp4', 8.8), asp: 9 / 16, keep: () => keep, g: () => .8, track: track('flip'), on, t, cam }),
+    glide: (on, t, keep, cam) => ({ name: 'nurek', parts: CLIP('f2-glide.mp4', 3.6), asp: 9 / 16, keep: () => keep, g: () => 1, track: track('glide'), on, t, cam }),
+    up: (on, t, keep, cam) => ({ name: 'w górę', parts: CLIP('f2-up.mp4', 2.8), asp: 9 / 16, keep: () => keep, g: () => 1, track: track('up'), on, t, cam }),
+    entry: (on, t, keep, cam) => ({ parts: CLIP('col-entry.mp4', 7), asp: 9 / 16, keep: () => keep, g: () => .4, on, t, cam }),
+    reef: (on, t, keep, cam) => ({ parts: CLIP('col-reef.mp4', 7), asp: 9 / 16, keep: () => keep, g: () => 1, on, t, cam }),
+    surface: (on, t, keep, cam) => ({ parts: CLIP('col-surface.mp4', 17.4), asp: 16 / 9, keep: () => keep, g: () => 1, on, t, cam }),
+  };
+
+  const names = Info2.room($('#room'));
+  const END = 12.3, intro = { t: .3, open: reduce ? 1 : 0 };
+  const lines = [...document.querySelectorAll('.line')], bl = $('.brandline'), stage = $('.stage'), strip = $('#strip'), tt = $('#strip .tt'), roomEl = $('#room');
+  const heads = names.map(([id, n]) => { const e = document.createElement('h2'); e.textContent = n; tt.appendChild(e); return { id, e, sec: document.getElementById(id) }; });
+  const shots = [
+    Shots.wide([-2, -1, 2.05, 2.45], h => 1.5 + c01(h / 2.45) * 6, () => 0, [[0, .5, .42, 1.04, -.004], [2.45, .47, .46, 1.07, .004]]),
+    Shots.head([2.05, 2.45, 3.7, 4.1], span(2.05, 4.1, .1, 4.8), () => .1, [[2.05, .5, .5, 1.04, .004], [4.1, .47, .52, 1.14, -.004]]),
+    Shots.fins([3.7, 4.1, 5.3, 5.65], span(3.7, 5.65, .1, 3.4), () => .34, [[3.7, .5, .5, 1.03, .004], [5.65, .52, .46, 1.12, -.004]]),
+    Shots.pass([5.3, 5.65, 6.8, 6.8 + cut], span(5.3, 6.8, 2.5, 5.22), .55, [[5.3, .5, .36, 1.02], [6.2, .5, .44, 1.03], [6.8, .42, .62, 1.32]]),
+    Shots.flip([6.8, 6.8 + cut, 8.8, 9.15], span(6.8, 9.1, 2.4, 8.6), .85, [[6.8, .5, .44, 1.02], [8, .5, .3, 1.02], [9.1, .5, .36, 1.04]]),
+    Shots.glide([8.8, 9.15, 10.5, 10.85], span(8.8, 10.85, .8, 3.0), .92, [[8.8, .5, .42, 1.02], [10.85, .5, .44, 1.04]]),
+    Shots.up([10.5, 10.85, 11.9, 12.2], span(10.5, 12.2, .1, 2.7), .95, [[10.5, .5, .52, 1.02], [12.2, .5, .42, 1.05]]),
+  ];
+  beat(bl, [-2, -1, .1, .4], { name: 'tytuł', y: 0, settle: false, blur: 6 });
+  beat($('#l1'), [.65, .9, 1.75, 2.0], { name: 'l1', y: 0, blur: 5 });
+  beat($('#l2'), [2.55, 2.8, 3.45, 3.7], { name: 'l2', y: 0, blur: 5 });
+  beat($('#l3'), [4.2, 4.45, 5.05, 5.3], { name: 'l3', y: 0, blur: 5 });
+  beat($('#l4'), [9.3, 9.55, 10.25, 10.5], { name: 'l4', y: 0, blur: 5 });
+  beat($('#l5'), [10.95, 11.2, 11.65, 11.9], { name: 'l5', y: 0, blur: 5 });
+  let barH = 0;
+  // the room starts under the strip when the film has handed over
+  $('.spacer').style.height = 'calc(' + (12.5 * 100) + 'svh + var(--bar) + 44svh)';
+  const NB = () => parseFloat(getComputedStyle($('.nav')).height);
+  // the room's picture shots are given their places on the page once it is laid out
+  function roomShots() {
+    const H = innerHeight;
+    const tops = heads.map(x => x.sec.getBoundingClientRect().top + scrollY), secY = tops.map(t => t / H);
+    const offs = (NB() + H * .44) / H;
+    // a section takes the screen when it reaches the line under the strip
+    const at = secY.map(y => y - offs), bottom = (document.documentElement.scrollHeight - H) / H + 3;
+    const mk = (i) => {
+      const a = at[i], b = i < at.length - 1 ? at[i + 1] : bottom, dh = (b - a);
+      const on = [a - .18, a + .02, b - .18, b + .02];
+      const key = (arr) => arr.map(k => [a + k[0] * dh, k[1], k[2], k[3], k[4]]);
+      if (i === 0) return Shots.head(on, span(a, b, .4, 4.6), () => .55, key([[0, .5, .62, 1.04, 0], [1, .5, .58, 1.04, 0]]));
+      if (i === 1) return Shots.flip(on, span(a, b, 5.4, 7.2), .9, key([[0, .5, .25, 1.02, 0], [1, .5, .3, 1.02, 0]]));
+      if (i === 2) return Shots.reef(on, span(a, b, .2, 6.6), .85, key([[0, .5, .62, 1.02, 0], [1, .5, .62, 1.02, 0]]));
+      if (i === 3) return Shots.entry(on, span(a, b, 2, 6.6), .8, key([[0, .5, .13, 1.02, 0], [1, .5, .15, 1.02, 0]]));
+      if (i === 4) return Shots.glide(on, span(a, b, 1.1, 2.8), .95, key([[0, .5, .43, 1.02, 0], [1, .5, .45, 1.02, 0]]));
+      return Shots.surface(on, span(a, b, 3, 12), .75, key([[0, .5, .34, 1.1, 0], [1, .5, .3, 1.12, 0]]));
+    };
+    return { at, list: heads.map((_, i) => mk(i)), offs };
+  }
+  // the room starts with its own space under the strip
+  function place() {
+    const W = Home.W, H = Home.H; barH = Math.max(0, (H - W / 2.39) / 2);
+    for (const l of lines) l.style.top = (H - barH / 2 - l.offsetHeight / 2) + 'px';
+    bl.style.bottom = '0'; bl.style.height = barH + 'px';
+  }
+  const pre = roomShots(); shots.push(...pre.list);
+  const at = pre.at;
+  // names under the screen, one ending before the next begins
+  heads.forEach((x, i) => { const a = at[i], b = i < at.length - 1 ? at[i + 1] : 1e3; beat(x.e, [a, a + .16, b - .18, b - .02], { name: 'nazwa' + i, y: 0, blur: 6, settle: false }); x.e.style.marginTop = '-.5em'; });
+  const FROM = END - .1;
+  FilmPage.start({ shots, total: null, base, stayOn: true, readingFrom: FROM,
+    gate: () => document.documentElement.classList.contains('reading') ? [NB() + Home.H * .44 + 4, Home.H + 1] : null,
+    onFrame(h, y, now, film) {
+      const H = Home.H, nb = NB();
+      // film: the wide frame; at the fin it opens to the whole screen; then wide again; then up to its place as a screen
+      const opened = ss((h - 6.8) / .22) * (1 - ss((h - 8.85) / .35));
+      const toHall = ss((h - 11.95) / .5);
+      const bar0 = barH + (H / 2 - barH) * (1 - intro.open);
+      const top = lerp(bar0 * (1 - opened), nb, toHall), bottom = lerp(H - bar0 * (1 - opened), nb + H * .3, toHall);
+      film.state.win = [0, top / H, 1, bottom / H];
+      // the stage covers only as far as the strip; below it the room scrolls
+      const hall = toHall >= 1;
+      stage.classList.toggle('hall', hall);
+      if (hall) stage.style.setProperty('--cut', (H - (nb + H * .44)) + 'px');
+      strip.style.top = (nb + H * .3) + 'px'; strip.style.height = (H * .14) + 'px';
+      strip.style.opacity = ss((h - 12.3) / .2);
+      strip.style.visibility = h > 12.2 ? 'visible' : 'hidden';
+      strip.style.pointerEvents = h > 12.4 ? 'auto' : 'none';
+      strip.querySelector('.cta2').style.visibility = h > 12.2 ? 'visible' : 'hidden';
+    },
+    resize: place,
+  }).then(() => {
+    place();
+    const sub = window.__home.subject;
+    window.__home.subject = () => { const r = sub(), w = window.__home.film.state.win, H = Home.H; if (!r) return r; const a = w[1] * H, b = w[3] * H; return r.bottom <= a || r.top >= b ? null : { ...r, top: Math.max(r.top, a), bottom: Math.min(r.bottom, b) }; };
+    if (reduce) return;
+    gsap.to(intro, { open: 1, duration: 2.6, ease: 'expo.inOut', delay: .25 });
+    gsap.from(bl.children, { opacity: 0, duration: 1.3, ease: 'power2.out', delay: 1.9, stagger: .35, clearProps: 'all' });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · szkoła freedivingu, Gdynia</title>
+<meta name="description" content="Kursy freedivingu w Gdyni dla początkujących i wyjazdy na głęboką wodę. Terminy, ceny, zapisy.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="media/f2-poster.jpg" as="image">
+<link rel="stylesheet" href="../lib/film-page-2.css">
+<style>
+/* VII. Napisy. A cold open: the first words on navy, then the picture rises from the surface. The fin closes the picture once.
+   The film ends at the surface in full colour, and everything one needs to know rolls over it as end credits. */
+.stage{z-index:0}
+.title{position:absolute;left:0;right:0;bottom:calc(var(--g)*1.1);text-align:center;font-weight:300;font-size:9vw;line-height:1;letter-spacing:-.05em;visibility:hidden;will-change:transform,opacity,filter}
+html.reading .nav{background:linear-gradient(180deg,var(--navy) 74%,rgba(10,20,36,0));height:calc(var(--bar)*1.3)}
+
+</style>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+<script src="../lib/home-core-2.js" defer></script>
+<script src="../lib/info-2.js" defer></script>
+<script src="../lib/film-2.js" defer></script>
+<script src="../lib/film-tracks-1.js" defer></script>
+<script src="../lib/film-run-2.js" defer></script>
+</head>
+<body data-base="media/">
+<!-- src: 'f2-woman-0.mp4' src: 'f2-woman-1.mp4' src: 'f2-woman-2.mp4' src: 'f2-woman-3.mp4' src: 'f2-head.mp4' src: 'f2-fins.mp4' src: 'f2-pass.mp4' src: 'f2-flip.mp4' src: 'f2-glide.mp4' src: 'f2-up.mp4' src: 'col-entry.mp4' src: 'col-surface.mp4' src: 'col-reef.mp4' -->
+<div class="stage">
+  <canvas class="gl"></canvas>
+  <div class="shade"></div>
+  <div class="over">
+    <p class="line" id="l1">Od teraz jesteś tylko ty i&nbsp;twoje emocje.</p><p class="line" id="l2">Oddech się reguluje, myśli się porządkują.</p><p class="line" id="l3">Z&nbsp;każdym metrem masz w&nbsp;sobie więcej siły.</p><p class="line" id="l4">Teraz już wiesz: twoje emocje to nie ty.</p><p class="line" id="l5">Tego można się nauczyć.</p>
+    <h1 class="title" id="tt">Slow Descent</h1>
+  </div>
+</div>
+<header class="nav">
+  <p class="brand"><a href="#" data-go="0">Slow Descent</a><span class="sub">Szkoła freedivingu, Gdynia</span></p>
+  <div class="links"><a class="skip" href="#start" data-go="#start">Kursy i terminy</a><a class="more" href="#kursy" data-go="#kursy">Kursy</a><a class="more" href="#terminy" data-go="#terminy">Terminy</a><a class="more" href="#pytania" data-go="#pytania">Pytania</a><a class="more" href="#zasady" data-go="#zasady">Bezpieczeństwo</a><a class="cta" href="#zapis" data-go="#zapis">Zapisz się</a></div>
+</header>
+
+<main><div class="spacer" aria-hidden="true"></div><div id="cred" class="credits"></div></main>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const base = document.body.dataset.base, { ss, c01, lerp, beat, reduce } = Home, { span, WOMAN, CLIP, track } = FilmPage, $ = s => document.querySelector(s);
+  const cut = .012;
+  // She is only ever seen whole and small in the frame, or as head and shoulders, or as fins: no close frames of the body.
+  const Shots = {
+    wide: (on, t, g, cam) => ({ name: 'kobieta', parts: WOMAN(), asp: 16 / 9, depth: true, poster: base + 'f2-poster.jpg', track: track('film'), on, t, g, cam }),
+    head: (on, t, g, cam) => ({ parts: CLIP('f2-head.mp4', 5), asp: 16 / 9, float: .8, on, t, g, cam }),
+    fins: (on, t, g, cam) => ({ parts: CLIP('f2-fins.mp4', 3.5), asp: 16 / 9, float: .8, on, t, g, cam }),
+    pass: (on, t, keep, cam) => ({ name: 'nurek', parts: CLIP('f2-pass.mp4', 9.1), asp: 9 / 16, keep: () => keep, g: () => .6, on, t, cam }),
+    flip: (on, t, keep, cam) => ({ name: 'przewrót', parts: CLIP('f2-flip.mp4', 8.8), asp: 9 / 16, keep: () => keep, g: () => .8, track: track('flip'), on, t, cam }),
+    glide: (on, t, keep, cam) => ({ name: 'nurek', parts: CLIP('f2-glide.mp4', 3.6), asp: 9 / 16, keep: () => keep, g: () => 1, track: track('glide'), on, t, cam }),
+    up: (on, t, keep, cam) => ({ name: 'w górę', parts: CLIP('f2-up.mp4', 2.8), asp: 9 / 16, keep: () => keep, g: () => 1, track: track('up'), on, t, cam }),
+    entry: (on, t, keep, cam) => ({ parts: CLIP('col-entry.mp4', 7), asp: 9 / 16, keep: () => keep, g: () => .4, on, t, cam }),
+    reef: (on, t, keep, cam) => ({ parts: CLIP('col-reef.mp4', 7), asp: 9 / 16, keep: () => keep, g: () => 1, on, t, cam }),
+    surface: (on, t, keep, cam) => ({ parts: CLIP('col-surface.mp4', 17.4), asp: 16 / 9, keep: () => keep, g: () => 1, on, t, cam }),
+  };
+
+  Info2.credits($('#cred'));
+  const END = 13.9;
+  const shots = [
+    Shots.entry([.85, 1.25, 2.6, 2.95], span(.85, 2.95, .6, 6), .25, [[.85, .5, .2, 1.1, 0], [2.95, .5, .28, 1.02, 0]]),
+    Shots.wide([2.6, 2.95, 4.2, 4.55], span(2.6, 4.55, 2, 8), () => .1, [[2.6, .5, .42, 1.04, -.004], [4.55, .46, .46, 1.07, .004]]),
+    Shots.head([4.2, 4.55, 5.5, 5.85], span(4.2, 5.85, .1, 4.8), () => .16, [[4.2, .5, .5, 1.04, .004], [5.85, .46, .52, 1.14, -.004]]),
+    Shots.fins([5.5, 5.85, 7, 7.35], span(5.5, 7.35, .1, 3.4), () => .36, [[5.5, .5, .5, 1.03, .004], [7.35, .52, .46, 1.12, -.004]]),
+    Shots.pass([7, 7.35, 8.5, 8.5 + cut], span(7, 8.5, 2.5, 5.22), .6, [[7, .5, .36, 1.02], [7.9, .5, .44, 1.03], [8.5, .42, .62, 1.32]]),
+    Shots.glide([8.5, 8.5 + cut, 10, 10.35], span(8.5, 10.35, .8, 3.0), .85, [[8.5, .5, .46, 1.02], [10.35, .5, .47, 1.04]]),
+    Shots.flip([10, 10.35, 11.8, 12.15], span(10, 12.15, 2.4, 8.6), .9, [[10, .5, .44, 1.02], [11.1, .5, .3, 1.02], [12.15, .5, .34, 1.04]]),
+    Shots.surface([11.8, 12.2, 99, 100], h => (h < 12.2 ? 3 : 3 + (h - 12.2) * .8) % 17, 1, [[11.8, .5, .36, 1.14, 0], [40, .5, .3, 1.2, 0]]),
+  ];
+  beat($('#l1'), [-2, -1, .55, .85], { name: 'l1', y: 8 });
+  beat($('#tt'), [3.05, 3.3, 3.95, 4.2], { name: 'tytuł', y: 8, blur: 10 });
+  beat($('#l2'), [4.7, 4.95, 5.4, 5.65], { name: 'l2', y: 8 });
+  beat($('#l3'), [6.0, 6.25, 6.85, 7.1], { name: 'l3', y: 8 });
+  beat($('#l4'), [8.7, 8.95, 9.25, 9.45], { name: 'l4', y: 8 });
+  beat($('#l5'), [12.35, 12.6, 13.05, 13.3], { name: 'l5', y: 8 });
+  const shade = $('.shade'), ls = ['#l2', '#l3', '#l4'].map($), lf = $('#l5'), nav = $('.nav');
+  FilmPage.start({ shots, total: END - 1, base, stayOn: true, readingFrom: END - .5,
+    gate: () => document.documentElement.classList.contains('reading') ? [nav.offsetHeight + 2, Home.H + 1] : null,
+    onFrame(h, y, now, film) {
+      shade.style.opacity = Math.max(+$('#tt').style.opacity || 0, ...ls.map(l => +l.style.opacity || 0));
+      // the surface sinks into the dark as the credits begin
+      film.state.dim = lerp(1, .24, ss((h - 13.2) / .7));
+      lf.style.color = '#06202E'; nav.style.color = h > 12.1 && h < 13.5 ? '#06202E' : '';
+    },
+  }).then(() => {
+    if (reduce) return;
+    gsap.from($('#l1'), { opacity: 0, filter: 'blur(10px)', duration: 2.4, ease: 'power2.out', delay: .3, clearProps: 'opacity,filter' });
+  });
+});
+</script>
+</body>
+</html>
