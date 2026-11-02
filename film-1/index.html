@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slow Descent · szkoła freedivingu, Gdynia</title>
+<meta name="description" content="Kursy freedivingu w Gdyni dla początkujących i wyjazdy na głęboką wodę. Terminy, ceny, zapisy.">
+<link rel="icon" href="data:,">
+<link rel="preload" href="media/snow.jpg" as="image">
+<link rel="preload" href="media/poster-film.jpg" as="image">
+<link rel="stylesheet" href="../lib/film-page-1.css">
+<style>
+/* I. The long take. One shot, no cuts: the camera is a second diver who keeps her company, moves in, drifts, and lets her go.
+   The words sit low and centred, as opening credits do, and the camera frames her above them. */
+.line{left:50%;bottom:calc(var(--g)*1.5);width:min(52vw,760px);margin-left:calc(min(52vw,760px)/-2);text-align:center;font-size:clamp(24px,2.5vw,38px)}
+.hero{position:absolute;left:0;right:0;bottom:calc(var(--g)*1.1);text-align:center;will-change:transform,opacity,filter}
+.hero h1{font-weight:300;font-size:9vw;line-height:1;letter-spacing:-.05em}
+.hero p{font-size:clamp(17px,1.4vw,21px);letter-spacing:-.008em;margin-top:14px;color:rgba(232,238,242,.84)}
+.veil{position:absolute;inset:0;background:var(--navy);z-index:1;pointer-events:none}
+
+</style>
+<script src="../lib/gsap-3.12.5.min.js" defer></script>
+<script src="../lib/ScrollTrigger-3.12.5.min.js" defer></script>
+<script src="../lib/lenis-1.1.13.min.js" defer></script>
+<script src="../lib/home-core-2.js" defer></script>
+<script src="../lib/info-1.js" defer></script>
+<script src="../lib/film-1.js" defer></script>
+<script src="../lib/film-tracks-1.js" defer></script>
+<script src="../lib/film-run-1.js" defer></script>
+</head>
+<body>
+<!-- src: 'film-depth-0.mp4' src: 'film-depth-1.mp4' src: 'film-depth-2.mp4' src: 'film-depth-3.mp4' src: 'col-surface.mp4'  -->
+<div class="stage">
+  <canvas class="gl"></canvas>
+  <div class="veil"></div>
+  <div class="over">
+    <div class="hero"><h1>Slow Descent</h1><p>Uczymy oddychać, zanim nauczymy nurkować.</p></div>
+    <p class="line" id="l1">Od teraz jesteś tylko ty i&nbsp;twoje emocje.</p><p class="line" id="l2">Oddech się reguluje, myśli się porządkują.</p><p class="line" id="l3">Z&nbsp;każdym metrem masz w&nbsp;sobie więcej siły.</p><p class="line" id="l4">Teraz już wiesz: twoje emocje to nie ty.</p><p class="line" id="l5">Tego można się nauczyć.</p>
+  </div>
+</div>
+<header class="nav">
+  <p class="brand"><a href="#" data-go="0">Slow Descent</a><span class="sub">Szkoła freedivingu, Gdynia</span></p>
+  <div class="links"><a class="skip" href="#start" data-go="#start">Kursy i terminy</a><a class="more" href="#kursy" data-go="#kursy">Kursy</a><a class="more" href="#terminy" data-go="#terminy">Terminy</a><a class="more" href="#pytania" data-go="#pytania">Pytania</a><a class="more" href="#zasady" data-go="#zasady">Bezpieczeństwo</a><a class="cta" href="#zapis" data-go="#zapis">Zapisz się</a></div>
+</header>
+<main>
+  <div class="spacer" aria-hidden="true"></div>
+  <div id="info" data-base="media/"></div>
+</main>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const { ss, beat, reduce } = Home, $ = s => document.querySelector(s);
+  const END = 10.5, intro = { t: .3 };
+  const shots = [{
+    name: 'kobieta', parts: FilmPage.PARTS(), asp: 16 / 9, depth: true, poster: "media/poster-film.jpg",
+    track: FilmPage.track('film'),
+    on: [-2, -1, 9.85, 10.45],
+    t: h => Math.min(34, intro.t + Math.max(0, h) / 10 * 31),
+    g: h => ss((h - 1.5) / 8),
+    //      h    x    y    zoom  roll
+    cam: [[0, .60, .38, 1.12, -.006], [1.2, .66, .5, 1.18, .004], [3.0, .72, .5, 1.27, -.012], [5.0, .75, .59, 1.36, .009], [7.1, .71, .64, 1.45, -.007], [8.6, .6, .63, 1.42, .004], [9.9, .55, .6, 1.26, 0]],
+  }];
+  beat($('#l1'), [.95, 1.25, 2.25, 2.55], { name: 'l1', y: 8 });
+  beat($('#l2'), [2.85, 3.15, 4.15, 4.45], { name: 'l2', y: 8 });
+  beat($('#l3'), [4.75, 5.05, 6.05, 6.35], { name: 'l3', y: 8 });
+  beat($('#l4'), [6.65, 6.95, 7.95, 8.25], { name: 'l4', y: 8 });
+  beat($('#l5'), [8.75, 9.05, 9.6, 9.85], { name: 'l5', y: 8 });
+  beat($('.hero'), [-2, -1, .15, .55], { name: 'tytuł', y: 16, settle: false });
+  FilmPage.start({ shots, filmEnd: END }).then(() => {
+    if (reduce) { $('.veil').remove(); intro.t = 3; return; }
+    gsap.to($('.veil'), { opacity: 0, duration: 2.4, ease: 'sine.inOut', delay: .15, onComplete() { this.targets()[0].remove(); } });
+    gsap.from($('.hero h1'), { opacity: 0, y: 18, filter: 'blur(10px)', duration: 2.2, ease: 'power2.out', delay: .9, clearProps: 'all' });
+    gsap.from($('.hero p'), { opacity: 0, duration: 1.4, ease: 'power2.out', delay: 2.2, clearProps: 'all' });
+    gsap.to(intro, { t: 3, duration: 5.2, ease: 'sine.out' });
+  });
+});
+</script>
+</body>
+</html>
